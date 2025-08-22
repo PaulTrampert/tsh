@@ -1,5 +1,9 @@
 #include "scanner.h"
 
+int scanner_is_whitespace(char c) {
+    return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+}
+
 char scanner_next(Scanner *scanner) {
     if (scanner->position < scanner->length) {
         return scanner->input[scanner->position++];
@@ -20,4 +24,24 @@ int scanner_match(Scanner *scanner, char expected) {
         return 1;
     }
     return 0;
+}
+
+int scanner_find_next(Scanner *scanner, char target) {
+    while (scanner->position < scanner->length) {
+        if (scanner->input[scanner->position] == target) {
+            return scanner->position;
+        }
+        scanner->position++;
+    }
+    return -1; // Not found
+}
+
+int scanner_find_next_whitespace(Scanner *scanner) {
+    while (scanner->position < scanner->length) {
+        if (scanner_is_whitespace(scanner->input[scanner->position])) {
+            return scanner->position;
+        }
+        scanner->position++;
+    }
+    return -1; // Not found
 }

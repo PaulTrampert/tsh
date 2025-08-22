@@ -85,8 +85,14 @@ void *tokenizer_init(char *inputStr, int inputLen) {
             case ']': 
                 type = RBRACK; 
                 break;
+            case '\'':
+                type = SQSTRING;
+                if (scanner_find_next(&scanner, '\'') == -1) {
+                    fprintf(stderr, "Unterminated single quote string at position %d\n", start);
+                }
             default: 
-                fprintf(stderr, "Unexpected character: %c at position %d\n", currentChar, start);
+                type = UQSTRING;
+                
                 continue;
         }
 
