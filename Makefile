@@ -2,7 +2,6 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g
 LDFLAGS =
 SRC_DIR = src
-OBJ_DIR = obj
 BIN_DIR = bin
 SRC = $(shell find $(SRC_DIR) -name "*.c")
 OBJ = $(patsubst %.c,%.o,$(SRC))
@@ -28,4 +27,4 @@ $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	rm -rf $(BIN_DIR) **/*.o
