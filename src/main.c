@@ -5,7 +5,7 @@
 #include "token.h"
 
 int main(int argc, char** argv) {
-    char *inputStr = "bobby said 'you are fat'";
+    char *inputStr = "bobby said 'you\\'re fat'";
     void *tokenizer = tokenizer_init(inputStr, strlen(inputStr));
 
     Token *token;
