@@ -90,3 +90,16 @@ void *list_get(List *list, size_t index) {
 size_t list_size(List *list) {
     return list ? list->size : 0;
 }
+
+void *list_dequeue(List *list) {
+    if (!list || list->size == 0) return NULL;
+
+    ListNode *first = list->head->next;
+    void *data = first->data;
+    list->head->next = first->next;
+    first->next->prev = list->head;
+    free(first);
+    list->size--;
+
+    return data;
+}

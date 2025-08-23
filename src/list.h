@@ -22,6 +22,7 @@ List *list_create();
 void list_destroy(List *list);
 int list_append(List *list, void *data);
 void *list_get(List *list, size_t index);
+void *list_dequeue(List *list);
 size_t list_size(List *list);
 
 #endif // LIST_H

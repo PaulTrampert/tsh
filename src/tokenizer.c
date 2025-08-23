@@ -8,7 +8,6 @@
 #include "char_util.h"
 
 
-
 void *tokenizer_init(char *inputStr, int inputLen) {
     Scanner scanner;
     scanner.input = inputStr;
@@ -84,8 +83,8 @@ void *tokenizer_init(char *inputStr, int inputLen) {
                 break;
             default: 
                 type = UQSTRING;
-                
-                continue;
+                scanner_find_next_whitespace(&scanner);
+                break;
         }
 
         Token *token = token_new(type, scanner.input + start, scanner.position - start);
@@ -113,4 +112,13 @@ void tokenizer_finalize(void *tokenizer) {
     }
 
     list_destroy(tokenList);
+}
+
+Token *tokenizer_next(void *tokenizer) {
+    if (!tokenizer) return NULL;
+
+    List *tokenList = (List *)tokenizer;
+    if (tokenList->size == 0) return NULL;
+
+    return (Token *)list_dequeue(tokenList);
 }
