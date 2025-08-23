@@ -1,8 +1,7 @@
 #include "scanner.h"
+#include "char_util.h"
 
-int scanner_is_whitespace(char c) {
-    return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
-}
+
 
 char scanner_next(Scanner *scanner) {
     if (scanner->position < scanner->length) {
@@ -38,7 +37,7 @@ int scanner_find_next(Scanner *scanner, char target) {
 
 int scanner_find_next_whitespace(Scanner *scanner) {
     while (scanner->position < scanner->length) {
-        if (scanner_is_whitespace(scanner->input[scanner->position])) {
+        if (char_is_whitespace(scanner->input[scanner->position])) {
             return scanner->position;
         }
         scanner->position++;

@@ -5,18 +5,9 @@
 #include "./scanner.h"
 #include "./token.h"
 #include "./tokenizer.h"
+#include "char_util.h"
 
-int is_whitespace(char c) {
-    return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
-}
 
-int is_digit(char c) {
-    return (c >= '0' && c <= '9');
-}
-
-int is_alpha(char c) {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
 
 void *tokenizer_init(char *inputStr, int inputLen) {
     Scanner scanner;
@@ -31,7 +22,7 @@ void *tokenizer_init(char *inputStr, int inputLen) {
     int start = scanner.position;
     while ((currentChar = scanner_next(&scanner)) != EOF) {
         start = scanner.position - 1;
-        if (is_whitespace(currentChar)) {
+        if (char_is_whitespace(currentChar)) {
             continue;
         }
 
@@ -90,6 +81,7 @@ void *tokenizer_init(char *inputStr, int inputLen) {
                 if (scanner_find_next(&scanner, '\'') == -1) {
                     fprintf(stderr, "Unterminated single quote string at position %d\n", start);
                 }
+                break;
             default: 
                 type = UQSTRING;
                 
