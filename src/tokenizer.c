@@ -33,48 +33,6 @@ void *tokenizer_init(char *inputStr, int inputLen) {
             case '|': 
                 type = PIPE; 
                 break;
-            case '!': 
-                type = BANG; 
-                break;
-            case '$': 
-                type = DOLLAR; 
-                break;
-            case '+': 
-                type = PLUS; 
-                break;
-            case '-': 
-                type = MINUS; 
-                break;
-            case '>': 
-                type = GT; 
-                break;
-            case '<': 
-                type = LT; 
-                break;
-            case '=': 
-                type = EQ; 
-                break;
-            case '/': 
-                type = FSLASH; 
-                break;
-            case '(': 
-                type = LPAREN; 
-                break;
-            case ')': 
-                type = RPAREN; 
-                break;
-            case '{': 
-                type = LBRACE; 
-                break;
-            case '}': 
-                type = RBRACE; 
-                break;
-            case '[': 
-                type = LBRACK; 
-                break;
-            case ']': 
-                type = RBRACK; 
-                break;
             case '\'':
                 type = SQSTRING;
                 if (scanner_find_next(&scanner, '\'') == -1) {

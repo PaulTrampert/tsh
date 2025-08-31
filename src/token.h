@@ -3,13 +3,10 @@
 
 enum _tokenType {
     // Primitives
-    UQSTRING, SQSTRING, NUMBER,
+    UQSTRING, SQSTRING,
 
     // Operators
-    AMP, PIPE, BANG, DOLLAR, PLUS, MINUS, GT, LT, EQ, GTE, LTE, EQEQ, FSLASH,
-
-    // Groupers
-    LPAREN, RPAREN, LBRACE, RBRACE, LBRACK, RBRACK
+    AMP, PIPE
 };
 
 typedef enum _tokenType TokenType;
