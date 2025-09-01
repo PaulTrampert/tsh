@@ -1,6 +1,20 @@
 #include "./list.h"
 #include <stdlib.h>
 
+struct _list_node {
+    void *data;
+    struct _list_node *next;
+    struct _list_node *prev;
+};
+
+typedef struct _list_node ListNode;
+
+struct _list {
+    ListNode *head;
+    ListNode *tail;
+    size_t size;
+};
+
 ListNode *list_node_create(void *data);
 void list_insert_before(ListNode *before, ListNode *new_node);
 void list_insert_after(ListNode *after, ListNode *new_node);
@@ -102,4 +116,10 @@ void *list_dequeue(List *list) {
     list->size--;
 
     return data;
+}
+
+void *list_head(List *list) {
+    if (!list || list->size == 0) return NULL;
+
+    return list->head->next->data;
 }

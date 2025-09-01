@@ -62,21 +62,26 @@ void tokenizer_finalize(void *tokenizer) {
 
     List *tokenList = (List *)tokenizer;
 
-    ListNode *current = tokenList->head->next;
-    while (current != tokenList->tail) {
-        Token *token = current->data;
+    while (list_size(tokenList) > 0) {
+        Token *token = (Token *)list_dequeue(tokenList);
         token_free(token);
-        current = current->next;
     }
 
     list_destroy(tokenList);
+}
+
+Token *tokenizer_peek(void *tokenizer) {
+    if (!tokenizer) return NULL;
+
+    List *tokenList = (List *)tokenizer;
+
+    return (Token *)list_head(tokenList);
 }
 
 Token *tokenizer_next(void *tokenizer) {
     if (!tokenizer) return NULL;
 
     List *tokenList = (List *)tokenizer;
-    if (tokenList->size == 0) return NULL;
 
     return (Token *)list_dequeue(tokenList);
 }
