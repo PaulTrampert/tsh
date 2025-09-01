@@ -123,3 +123,17 @@ void *list_head(List *list) {
 
     return list->head->next->data;
 }
+
+int list_for_each(List *list, int (*callback)(void *data, void *ctx), void *ctx) {
+    if (!list || !callback) return -1;
+
+    ListNode *current = list->head->next;
+    while (current != list->tail) {
+        if (callback(current->data, ctx) != 0) {
+            return -1;
+        }
+        current = current->next;
+    }
+
+    return 0;
+}

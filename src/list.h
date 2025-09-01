@@ -11,5 +11,6 @@ void *list_get(List *list, size_t index);
 void *list_dequeue(List *list);
 void *list_head(List *list);
 size_t list_size(List *list);
+int list_for_each(List *list, int (*callback)(void *data, void *ctx), void *ctx);
 
 #endif // LIST_H
