@@ -27,4 +27,4 @@ $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
 clean:
-	rm -rf $(BIN_DIR) **/*.o
+	rm -rf $(BIN_DIR) src/grammar/rules/*.o src/grammar/*.o src/*.o

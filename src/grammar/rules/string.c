@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "string.h"
-#include "../../tokenizer.h"
+#include "../tokenizer.h"
 #include "../../esc_map.h"
 
 AstNode *ast_parse_string(void *tokenizer) {
@@ -27,6 +27,7 @@ AstNode *ast_parse_string(void *tokenizer) {
             string[sPos] = token->text[tPos];
         }
     }
+    token_free(token);
     AstNode *node = ast_create_node(AST_STRING);
     if (!node) {
         free(string);

@@ -2,7 +2,7 @@
 #include "../ast.h"
 #include "pipeline.h"
 #include "command.h"
-#include "../../tokenizer.h"
+#include "../tokenizer.h"
 #include <stdio.h>
 
 AstNode *ast_parse_pipeline(void *tokenizer) {
@@ -20,7 +20,7 @@ AstNode *ast_parse_pipeline(void *tokenizer) {
     while (1) {
         Token *tok = tokenizer_peek(tokenizer);
         if (!tok || tok->type != PIPE) break;
-        tokenizer_next(tokenizer); // consume PIPE
+        token_free(tokenizer_next(tokenizer)); // consume PIPE
         AstNode *next_cmd = ast_parse_command(tokenizer);
         if (!next_cmd) {
             ast_free_node(pipeline_node);
@@ -32,7 +32,7 @@ AstNode *ast_parse_pipeline(void *tokenizer) {
     // Optionally parse AMP
     Token *tok = tokenizer_peek(tokenizer);
     if (tok && tok->type == AMP) {
-        tokenizer_next(tokenizer); // consume AMP
+        token_free(tokenizer_next(tokenizer)); // consume AMP
         pipeline_node->pipeline.background = true;
     }
 

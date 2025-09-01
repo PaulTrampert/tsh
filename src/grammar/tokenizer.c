@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "./list.h"
-#include "./scanner.h"
-#include "./token.h"
-#include "./tokenizer.h"
-#include "char_util.h"
+#include "../list.h"
+#include "../scanner.h"
+#include "token.h"
+#include "tokenizer.h"
+#include "../char_util.h"
 
 
 void *tokenizer_init(char *inputStr, int inputLen) {

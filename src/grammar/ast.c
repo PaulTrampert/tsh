@@ -75,7 +75,6 @@ void ast_free_node(AstNode *node) {
 int ast_print(AstNode *node, int depth) {
     if (!node) return -1;
 
-    int nextDepth = depth + 1;
     switch (node->type) {
         case AST_PIPELINE:
             ast_print_pipeline(node, depth);

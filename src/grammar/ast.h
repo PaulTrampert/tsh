@@ -2,7 +2,7 @@
 #define AST_H
 #include <stdbool.h>
 #include "../list.h"
-#include "../token.h"
+#include "token.h"
 
 typedef enum {
     AST_PIPELINE,
