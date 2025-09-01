@@ -137,6 +137,7 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
             exit(execResult);
         }
 
+        array_list_destroy(args, &free);
         result->status = pid;
     }
     return result->status;
