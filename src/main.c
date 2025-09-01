@@ -46,6 +46,7 @@ int main(int argc, char** argv) {
 
         if (echoCommand) {
             ast_print(ast, STDOUT_FILENO);
+            fprintf(stdout, "\n");
         }
 
         ExecuteResult result;

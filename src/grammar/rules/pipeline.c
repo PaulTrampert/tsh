@@ -61,7 +61,5 @@ int ast_print_pipeline(AstNode *node, int outFd) {
         dprintf(outFd, " &");
     }
 
-    dprintf(outFd, "\n");
-
     return 0;
 }
