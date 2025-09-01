@@ -42,7 +42,7 @@ int scanner_find_next(Scanner *scanner, char target) {
 int scanner_find_next_whitespace(Scanner *scanner) {
     while (scanner->position < scanner->length) {
         if (char_is_whitespace(scanner->input[scanner->position])) {
-            return scanner->position++;
+            return scanner->position;
         }
         if (scanner->input[scanner->position] == '\\' && scanner->position + 1 < scanner->length) {
             // Skip escaped character

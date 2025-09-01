@@ -19,7 +19,7 @@ void *tokenizer_init(char *inputStr, int inputLen) {
 
     char currentChar;
     int start = scanner.position;
-    while ((currentChar = scanner_next(&scanner)) != EOF) {
+    while ((currentChar = scanner_next(&scanner)) != NULL) {
         start = scanner.position - 1;
         if (char_is_whitespace(currentChar)) {
             continue;

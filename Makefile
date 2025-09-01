@@ -1,5 +1,13 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g
+BUILD_MODE ?= debug
+
+CFLAGS = -Wall -Wextra
+ifeq ($(BUILD_MODE), release)
+	CFLAGS += -O2
+else
+	CFLAGS += -g
+endif
+
 LDFLAGS =
 SRC_DIR = src
 BIN_DIR = bin
