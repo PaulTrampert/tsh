@@ -17,11 +17,8 @@ build: $(BIN_DIR)/$(TARGET)
 $(BIN_DIR)/$(TARGET): $(OBJ) | $(BIN_DIR)
 	$(CC) $(LDFLAGS) -o $@ $^
 
-$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)

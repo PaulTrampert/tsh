@@ -18,8 +18,8 @@ AstNode *ast_parse_string(void *tokenizer) {
 
     int sPos = 0;
     int tPos = token->type == SQSTRING ? 1 : 0;
-    int tLen = token->type == SQSTRING ? token->length - 2 : token->length;
-    for (; sPos < tLen; sPos++, tPos++) {
+    int tLen = token->type == SQSTRING ? token->length - 1 : token->length;
+    for (; tPos < tLen; sPos++, tPos++) {
         if (token->text[tPos] == '\\') {
             tPos++;
             string[sPos] = esc_map_escape(token->text[tPos]);
