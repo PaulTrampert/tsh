@@ -30,12 +30,22 @@ AstNode *ast_parse_command(void *tokenizer) {
     return node;
 }
 
-int ast_print_command(AstNode *node, int depth) {
+int ast_print_command(AstNode *node, int outFd) {
     if (!node || node->type != AST_COMMAND) {
         return 1;
     }
-    printf("%*sType: %s\n", depth * 2, "", ast_type_name(node->type));
 
-    list_for_each(node->command.strings, (int (*)(void *, void *))ast_print, (void *)(depth + 1));
+    ListIterator *it = list_iterator_create(node->command.strings);
+    bool first = true;
+    while (list_iterator_has_next(it)) {
+        if (!first) {
+            dprintf(outFd, " ");
+        }
+        AstNode *childNode = list_iterator_next(it);
+        ast_print(childNode, outFd);
+        first = false;
+    }
+
+    list_iterator_destroy(it);
     return 0;
 }

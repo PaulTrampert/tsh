@@ -42,10 +42,26 @@ AstNode *ast_parse_pipeline(void *tokenizer) {
     return pipeline_node;
 }
 
-int ast_print_pipeline(AstNode *node, int depth) {
+int ast_print_pipeline(AstNode *node, int outFd) {
     if (!node || node->type != AST_PIPELINE) return 1;
-    printf("%*sType: %s\n", depth * 2, "", ast_type_name(node->type));
-    printf("%*sBackground: %s\n", depth * 2, "", node->pipeline.background ? "true" : "false");
-    list_for_each(node->pipeline.commands, (int (*)(void *, void *))ast_print, (void *)(depth + 1));
+    
+    ListIterator *it = list_iterator_create(node->pipeline.commands);
+    bool first = true;
+    while (list_iterator_has_next(it)) {
+        if (!first) {
+            dprintf(outFd, " | ");
+        }
+        AstNode *childNode = list_iterator_next(it);
+        ast_print(childNode, outFd);
+        first = false;
+    }
+
+    list_iterator_destroy(it);
+    if (node->pipeline.background) {
+        dprintf(outFd, " &");
+    }
+
+    dprintf(outFd, "\n");
+
     return 0;
 }

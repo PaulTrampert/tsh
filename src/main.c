@@ -11,6 +11,15 @@
 
 int main(int argc, char** argv) {
     
+    bool echoCommand = false;
+
+    if (argc > 1) {
+        if (strcmp(argv[1], "--echoCommands") == 0) {
+            echoCommand = true;
+        }
+    }
+
+
     while(true) {
         char *input = NULL;
         size_t len = 0;
@@ -35,6 +44,10 @@ int main(int argc, char** argv) {
             continue;
         }
 
+        if (echoCommand) {
+            ast_print(ast, STDOUT_FILENO);
+        }
+
         ExecuteResult result;
         result.status = 0;
         result.output = NULL;
@@ -42,6 +55,11 @@ int main(int argc, char** argv) {
 
         execute_ast(ast, STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO, &result);
         
+        if (result.error) {
+            fprintf(stderr, "Error: %s\n", result.error);
+            free(result.error);
+        }
+
         ast_free_node(ast);
         tokenizer_finalize(tokenizer);
         free(input);

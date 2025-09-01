@@ -24,6 +24,7 @@ struct _astNode {
 
         struct {
             char *value;
+            Token *originalToken;
         } string;
     }; 
 };
@@ -35,7 +36,7 @@ void ast_free_node(AstNode *node);
 
 AstNode *ast_parse(void *tokenizer);
 
-int ast_print(AstNode *node, int depth);
+int ast_print(AstNode *node, int outFd);
 
 char *ast_type_name(ASTNodeType type);
 

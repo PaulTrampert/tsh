@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "../exit_codes.h"
 #include "../list.h"
 #include "ast.h"
 #include "rules/string.h"
@@ -22,7 +23,7 @@ AstNode *ast_parse(void *tokenizer) {
 
 AstNode *ast_create_node(ASTNodeType type) {
     AstNode *node = (AstNode *)malloc(sizeof(AstNode));
-    if (!node) return NULL;
+    if (!node) exit(EOOM);
 
     node->type = type;
     switch (type) {
@@ -42,6 +43,7 @@ AstNode *ast_create_node(ASTNodeType type) {
             }
             break;
         case AST_STRING:
+            node->string.originalToken = NULL;
             node->string.value = NULL;
             break;
         default:
@@ -64,6 +66,7 @@ void ast_free_node(AstNode *node) {
             break;
         case AST_STRING:
             if (node->string.value) free(node->string.value);
+            if (node->string.originalToken) token_free(node->string.originalToken);
             break;
         default:
             break;
@@ -72,18 +75,18 @@ void ast_free_node(AstNode *node) {
     free(node);
 }
 
-int ast_print(AstNode *node, int depth) {
+int ast_print(AstNode *node, int outFd) {
     if (!node) return -1;
 
     switch (node->type) {
         case AST_PIPELINE:
-            ast_print_pipeline(node, depth);
+            ast_print_pipeline(node, outFd);
             break;
         case AST_COMMAND:
-            ast_print_command(node, depth);
+            ast_print_command(node, outFd);
             break;
         case AST_STRING:
-            ast_print_string(node, depth);
+            ast_print_string(node, outFd);
             break;
         default:
             break;

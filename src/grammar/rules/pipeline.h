@@ -5,6 +5,6 @@
 
 AstNode *ast_parse_pipeline(void *tokenizer);
 
-int ast_print_pipeline(AstNode *node, int depth);
+int ast_print_pipeline(AstNode *node, int outFd);
 
 #endif // GRAMMAR_RULES_PIPELINE_H

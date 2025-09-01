@@ -5,6 +5,6 @@
 
 AstNode *ast_parse_string(void *tokenizer);
 
-int ast_print_string(AstNode *node, int depth);
+int ast_print_string(AstNode *node, int outFd);
 
 #endif // GRAMMAR_RULES_STRING_H

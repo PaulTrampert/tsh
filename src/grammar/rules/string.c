@@ -27,20 +27,21 @@ AstNode *ast_parse_string(void *tokenizer) {
             string[sPos] = token->text[tPos];
         }
     }
-    token_free(token);
     AstNode *node = ast_create_node(AST_STRING);
     if (!node) {
+        token_free(token);
         free(string);
         return NULL;
     }
     node->string.value = string;
+    node->string.originalToken = token;
     return node;
 }
 
-int ast_print_string(AstNode *node, int depth) {
+int ast_print_string(AstNode *node, int outFd) {
     if (!node || node->type != AST_STRING) {
         return 1;
     }
-    printf("%*sType: %s - %s\n", depth * 2, "", ast_type_name(node->type), node->string.value);
+    dprintf(outFd, "%s", node->string.originalToken->text);
     return 0;
 }
