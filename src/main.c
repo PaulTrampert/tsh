@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <unistd.h>
 #include "grammar/tokenizer.h"
 #include "grammar/token.h"
 #include "grammar/ast.h"
+#include "execution/execute.h"
 
 int main(int argc, char** argv) {
     
@@ -32,7 +35,13 @@ int main(int argc, char** argv) {
             continue;
         }
 
-        ast_print(ast, 0);
+        ExecuteResult result;
+        result.status = 0;
+        result.output = NULL;
+        result.error = NULL;
+
+        execute_ast(ast, STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO, &result);
+        
         ast_free_node(ast);
         tokenizer_finalize(tokenizer);
         free(input);

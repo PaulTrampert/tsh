@@ -6,9 +6,10 @@
 typedef struct _arrayList ArrayList;
 
 ArrayList *array_list_create();
-void array_list_destroy(ArrayList *list);
+void array_list_destroy(ArrayList *list, void (*item_destroyer)(void *));
 int array_list_append(ArrayList *list, void *item);
 void *array_list_get(ArrayList *list, size_t index);
 size_t array_list_size(ArrayList *list);
+void **array_list_get_data(ArrayList *list);
 
 #endif // ARRAY_LIST_H

@@ -1,4 +1,5 @@
 #include "./list.h"
+#include "exit_codes.h"
 #include <stdlib.h>
 
 struct _list_node {
@@ -13,6 +14,11 @@ struct _list {
     ListNode *head;
     ListNode *tail;
     size_t size;
+};
+
+struct _listIterator {
+    List *list;
+    ListNode *current;
 };
 
 ListNode *list_node_create(void *data);
@@ -33,7 +39,7 @@ void list_insert_after(ListNode *after, ListNode *new_node) {
 
 ListNode *list_node_create(void *data) {
     ListNode *node = malloc(sizeof(ListNode));
-    if (!node) return NULL;
+    if (!node) exit(EOOM);
 
     node->data = data;
     node->next = NULL;
@@ -44,19 +50,19 @@ ListNode *list_node_create(void *data) {
 
 List *list_create() {
     List *list = malloc(sizeof(List));
-    if (!list) return NULL;
+    if (!list) exit(EOOM);
 
     list->size = 0;
     list->head = list_node_create(NULL);
     if (!list->head) {
         free(list);
-        return NULL;
+        exit(EOOM);
     }
     list->tail = list_node_create(NULL);
     if (!list->tail) {
         free(list->head);
         free(list);
-        return NULL;
+        exit(EOOM);
     }
 
     list->head->next = list->tail;
@@ -136,4 +142,34 @@ int list_for_each(List *list, int (*callback)(void *data, void *ctx), void *ctx)
     }
 
     return 0;
+}
+
+ListIterator *list_iterator_create(List *list) {
+    if (!list) return NULL;
+
+    ListIterator *iter = malloc(sizeof(ListIterator));
+    if (!iter) exit(EOOM);
+
+    iter->current = list->head->next;
+    iter->list = list;
+
+    return iter;
+}
+
+void list_iterator_destroy(ListIterator *iter) {
+    free(iter);
+}
+
+bool list_iterator_has_next(ListIterator *iter) {
+    if (!iter) return false;
+    return iter->current != iter->list->tail;
+}
+
+void *list_iterator_next(ListIterator *iter) {
+    if (!iter || !list_iterator_has_next(iter)) return NULL;
+
+    void *data = iter->current->data;
+    iter->current = iter->current->next;
+
+    return data;
 }
