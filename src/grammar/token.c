@@ -3,12 +3,13 @@
 #include "./token.h"
 
 
-Token *token_new(TokenType type, const char *text, int length) {
+Token *token_new(TokenType type, const char *text, int length, int position) {
     Token *token = malloc(sizeof(Token));
     if (!token) return NULL;
 
     token->type = type;
     token->length = length;
+    token->position = position;
     token->text = malloc(length + 1);
     if (!token->text) {
         free(token);

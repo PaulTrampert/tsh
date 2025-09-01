@@ -45,7 +45,7 @@ void *tokenizer_init(char *inputStr, int inputLen) {
                 break;
         }
 
-        Token *token = token_new(type, scanner.input + start, scanner.position - start);
+        Token *token = token_new(type, scanner.input + start, scanner.position - start, start);
         if (!token) {
             list_destroy(tokenList);
             return NULL;
