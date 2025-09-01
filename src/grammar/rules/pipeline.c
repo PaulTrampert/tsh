@@ -20,10 +20,12 @@ AstNode *ast_parse_pipeline(void *tokenizer) {
     while (1) {
         Token *tok = tokenizer_peek(tokenizer);
         if (!tok || tok->type != PIPE) break;
-        token_free(tokenizer_next(tokenizer)); // consume PIPE
+        tok = tokenizer_next(tokenizer); // consume PIPE
         AstNode *next_cmd = ast_parse_command(tokenizer);
         if (!next_cmd) {
             ast_free_node(pipeline_node);
+            fprintf(stderr, "Missing command after '|' at position %d\n", tok->position);
+            token_free(tok);
             return NULL;
         }
         list_append(pipeline_node->pipeline.commands, next_cmd);
