@@ -13,7 +13,7 @@ SRC_DIR = src
 BIN_DIR = bin
 SRC = $(shell find $(SRC_DIR) -name "*.c")
 OBJ = $(patsubst %.c,%.o,$(SRC))
-TARGET = baby-shell
+TARGET = $(shell basename $(CURDIR))
 
 .PHONY: all clean
 
