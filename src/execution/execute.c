@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 #include "../exit_codes.h"
 #include "execute.h"
 #include "../list.h"
@@ -202,6 +203,7 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
             }
             int execResult = execvp((char *)array_list_get(args, 0), (char **)array_list_get_data(args));
             // If execvp returns, it must have failed
+            dprintf(stderr_fd, "Error executing command: %s\n", strerror(errno));
             exit(execResult);
         }
 
