@@ -11,11 +11,11 @@
 
 #define EXECUTE_RESULT_FAILED(status) (status < 0)
 
-
-
-ExecuteResult *execute_new_result() {
+ExecuteResult *execute_new_result()
+{
     ExecuteResult *result = (ExecuteResult *)malloc(sizeof(ExecuteResult));
-    if (result) {
+    if (result)
+    {
         result->status = 0;
         result->output = NULL;
         result->error = NULL;
@@ -23,34 +23,42 @@ ExecuteResult *execute_new_result() {
     return result;
 }
 
-void execute_free_result(ExecuteResult *result) {
-    if (result) {
+void execute_free_result(ExecuteResult *result)
+{
+    if (result)
+    {
         free(result->output);
         free(result->error);
         free(result);
     }
 }
 
-int execute_ast(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result) {
-    if (!root || !result) return -1;
+int execute_ast(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
+{
+    if (!root || !result)
+        return -1;
 
-    switch (root->type) {
-        case AST_STRING:
-            return execute_string(root, stdin_fd, stdout_fd, stderr_fd, result);
-        case AST_COMMAND:
-            return execute_command(root, stdin_fd, stdout_fd, stderr_fd, result);
-        case AST_PIPELINE:
-            return execute_pipeline(root, stdin_fd, stdout_fd, stderr_fd, result);
-        default:
-            result->status = -1;
-            result->error = strdup("Unknown AST node type");
-            return result->status;
+    switch (root->type)
+    {
+    case AST_STRING:
+        return execute_string(root, stdin_fd, stdout_fd, stderr_fd, result);
+    case AST_COMMAND:
+        return execute_command(root, stdin_fd, stdout_fd, stderr_fd, result);
+    case AST_PIPELINE:
+        return execute_pipeline(root, stdin_fd, stdout_fd, stderr_fd, result);
+    default:
+        result->status = -1;
+        result->error = strdup("Unknown AST node type");
+        return result->status;
     }
 }
 
-int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result) {
-    if (!root || root->type != AST_PIPELINE || !result) {
-        if (result) {
+int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
+{
+    if (!root || root->type != AST_PIPELINE || !result)
+    {
+        if (result)
+        {
             result->status = -1;
             result->error = strdup("Invalid AST node for pipeline execution");
         }
@@ -58,13 +66,15 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
     }
 
     int numCommands = list_size(root->pipeline.commands);
-    if (numCommands == 0) {
+    if (numCommands == 0)
+    {
         result->status = 0;
         return result->status;
     }
 
     pid_t *pids = malloc(numCommands * sizeof(pid_t));
-    if (!pids) exit(EOOM);
+    if (!pids)
+        exit(EOOM);
 
     int cmdIn = stdin_fd;
     int cmdOut = -1;
@@ -72,15 +82,18 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
     int i = 0;
     ListIterator *cmdIter = list_iterator_create(root->pipeline.commands);
 
-    while (list_iterator_has_next(cmdIter)) {
+    while (list_iterator_has_next(cmdIter))
+    {
         AstNode *cmdNode = list_iterator_next(cmdIter);
         ExecuteResult cmdResult;
         cmdResult.status = 0;
         cmdResult.output = NULL;
         cmdResult.error = NULL;
         int pipeFds[2];
-        if (list_iterator_has_next(cmdIter)) {
-            if (pipe(pipeFds) == -1) {
+        if (list_iterator_has_next(cmdIter))
+        {
+            if (pipe(pipeFds) == -1)
+            {
                 result->status = -1;
                 result->error = strdup("Failed to create pipe");
                 return result->status;
@@ -88,22 +101,27 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
             cmdOut = pipeFds[1];
             nextCmdIn = pipeFds[0];
         }
-        else {
+        else
+        {
             pipeFds[0] = -1;
             pipeFds[1] = -1;
             nextCmdIn = -1;
             cmdOut = stdout_fd;
         }
         execute_ast(cmdNode, cmdIn, cmdOut, stderr_fd, &cmdResult);
-        if (cmdIn != stdin_fd && cmdIn != -1) {
+        if (cmdIn != stdin_fd && cmdIn != -1)
+        {
             close(cmdIn);
         }
-        if (cmdOut != stdout_fd && cmdOut != -1) {
+        if (cmdOut != stdout_fd && cmdOut != -1)
+        {
             close(cmdOut);
         }
         cmdIn = nextCmdIn;
-        if (EXECUTE_RESULT_FAILED(cmdResult.status)) {
-            if (cmdResult.error) {
+        if (EXECUTE_RESULT_FAILED(cmdResult.status))
+        {
+            if (cmdResult.error)
+            {
                 dprintf(stderr_fd, "Error executing command: %s\n", cmdResult.error);
                 free(cmdResult.error);
             }
@@ -113,8 +131,10 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
     }
     list_iterator_destroy(cmdIter);
 
-    for (int j = 0; j < i; j++) {
-        if (pids[j] != -1) {
+    for (int j = 0; j < i; j++)
+    {
+        if (pids[j] != -1)
+        {
             waitpid(pids[j], &result->status, 0);
         }
     }
@@ -122,19 +142,23 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
     return result->status;
 }
 
-int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result) {
+int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
+{
     result->status = -1;
-    if (root && root->type == AST_COMMAND) {
+    if (root && root->type == AST_COMMAND)
+    {
         ArrayList *args = array_list_create();
         ListIterator *iter = list_iterator_create(root->command.strings);
-        while (list_iterator_has_next(iter)) {
+        while (list_iterator_has_next(iter))
+        {
             AstNode *argNode = list_iterator_next(iter);
             ExecuteResult argResult;
             argResult.status = 0;
             argResult.error = NULL;
             argResult.output = NULL;
             execute_ast(argNode, stdin_fd, stdout_fd, stderr_fd, &argResult);
-            if (EXECUTE_RESULT_FAILED(argResult.status)) {
+            if (EXECUTE_RESULT_FAILED(argResult.status))
+            {
                 // Handle argument execution failure
                 result->status = argResult.status;
                 result->error = argResult.error;
@@ -142,7 +166,8 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
                 array_list_destroy(args, &free);
                 return result->status;
             }
-            if (argResult.output) {
+            if (argResult.output)
+            {
                 array_list_append(args, argResult.output);
             }
         }
@@ -150,23 +175,28 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
 
         pid_t pid = fork();
 
-        if (pid == -1) {
+        if (pid == -1)
+        {
             result->status = -1;
             result->error = strdup("Failed to fork");
             array_list_destroy(args, &free);
             return result->status;
         }
-        else if (pid == 0) {
+        else if (pid == 0)
+        {
             // Child process
-            if (stdin_fd != STDIN_FILENO) {
+            if (stdin_fd != STDIN_FILENO)
+            {
                 dup2(stdin_fd, STDIN_FILENO);
                 close(stdin_fd);
             }
-            if (stdout_fd != STDOUT_FILENO) {
+            if (stdout_fd != STDOUT_FILENO)
+            {
                 dup2(stdout_fd, STDOUT_FILENO);
                 close(stdout_fd);
             }
-            if (stderr_fd != STDERR_FILENO) {
+            if (stderr_fd != STDERR_FILENO)
+            {
                 dup2(stderr_fd, STDERR_FILENO);
                 close(stderr_fd);
             }
@@ -181,9 +211,11 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
     return result->status;
 }
 
-int execute_string(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result) {
+int execute_string(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
+{
     result->status = -1;
-    if (root && root->type == AST_STRING) {
+    if (root && root->type == AST_STRING)
+    {
         // Execute the string command
         result->status = 0;
         result->output = strdup(root->string.value);

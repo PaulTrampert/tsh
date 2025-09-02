@@ -9,42 +9,49 @@
 #include "grammar/ast.h"
 #include "execution/execute.h"
 
-int main(int argc, char** argv) {
-    
+int main(int argc, char **argv)
+{
+
     bool echoCommand = false;
 
-    if (argc > 1) {
-        if (strcmp(argv[1], "--echoCommands") == 0) {
+    if (argc > 1)
+    {
+        if (strcmp(argv[1], "--echoCommands") == 0)
+        {
             echoCommand = true;
         }
     }
 
-
-    while(true) {
+    while (true)
+    {
         char *input = NULL;
         size_t len = 0;
         printf("> ");
-        if (getline(&input, &len, stdin) == -1) {
+        if (getline(&input, &len, stdin) == -1)
+        {
             perror("getline");
             free(input);
             break;
         }
 
-        if (strncmp(input, "exit", 4) == 0) {
+        if (strncmp(input, "exit", 4) == 0)
+        {
             free(input);
             break;
         }
 
         void *tokenizer = tokenizer_init(input, len);
         AstNode *ast = ast_parse(tokenizer);
-        if (!ast) {
+        if (!ast)
+        {
             fprintf(stderr, "Failed to parse AST\n");
             tokenizer_finalize(tokenizer);
             free(input);
             continue;
         }
 
-        if (echoCommand) {
+        if (echoCommand)
+        {
             ast_print(ast, STDOUT_FILENO);
             fprintf(stdout, "\n");
         }
@@ -55,8 +62,9 @@ int main(int argc, char** argv) {
         result.error = NULL;
 
         execute_ast(ast, STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO, &result);
-        
-        if (result.error) {
+
+        if (result.error)
+        {
             fprintf(stderr, "Error: %s\n", result.error);
             free(result.error);
         }

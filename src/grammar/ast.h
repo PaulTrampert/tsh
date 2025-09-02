@@ -4,29 +4,35 @@
 #include "../list.h"
 #include "token.h"
 
-typedef enum {
+typedef enum
+{
     AST_PIPELINE,
     AST_COMMAND,
     AST_STRING
 } ASTNodeType;
 
-struct _astNode {
+struct _astNode
+{
     ASTNodeType type;
-    union {
-        struct {
+    union
+    {
+        struct
+        {
             List *commands; // List of AstNode of type AST_COMMAND
             bool background;
         } pipeline;
 
-        struct {
+        struct
+        {
             List *strings; // List of AstNode of type AST_STRING
         } command;
 
-        struct {
+        struct
+        {
             char *value;
             Token *originalToken;
         } string;
-    }; 
+    };
 };
 
 typedef struct _astNode AstNode;

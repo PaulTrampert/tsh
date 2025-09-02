@@ -5,8 +5,8 @@
 #include <stdbool.h>
 #include "../grammar/ast.h"
 
-
-typedef struct _job {
+typedef struct _job
+{
     int id;
     int status;
     bool background;

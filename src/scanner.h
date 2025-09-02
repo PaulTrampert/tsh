@@ -5,7 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct
+{
     char *input;
     size_t length;
     size_t position;

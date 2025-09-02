@@ -1,17 +1,21 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 
-enum _tokenType {
+enum _tokenType
+{
     // Primitives
-    UQSTRING, SQSTRING,
+    UQSTRING,
+    SQSTRING,
 
     // Operators
-    AMP, PIPE
+    AMP,
+    PIPE
 };
 
 typedef enum _tokenType TokenType;
 
-struct _token {
+struct _token
+{
     TokenType type;
     int length;
     char *text;

@@ -3,7 +3,8 @@
 
 #include "../grammar/ast.h"
 
-typedef struct _executeResult {
+typedef struct _executeResult
+{
     int status;
     char *output;
     char *error;

@@ -4,31 +4,39 @@
 #include "../tokenizer.h"
 #include "../../esc_map.h"
 
-AstNode *ast_parse_string(void *tokenizer) {
+AstNode *ast_parse_string(void *tokenizer)
+{
     Token *token = tokenizer_peek(tokenizer);
-    if (!token || (token->type != UQSTRING && token->type != SQSTRING)) {
+    if (!token || (token->type != UQSTRING && token->type != SQSTRING))
+    {
         return NULL;
     }
     token = tokenizer_next(tokenizer);
 
     char *string = calloc(token->length + 1, sizeof(char));
-    if (!string) {
+    if (!string)
+    {
         return NULL;
     }
 
     int sPos = 0;
     int tPos = token->type == SQSTRING ? 1 : 0;
     int tLen = token->type == SQSTRING ? token->length - 1 : token->length;
-    for (; tPos < tLen; sPos++, tPos++) {
-        if (token->text[tPos] == '\\') {
+    for (; tPos < tLen; sPos++, tPos++)
+    {
+        if (token->text[tPos] == '\\')
+        {
             tPos++;
             string[sPos] = esc_map_escape(token->text[tPos]);
-        } else {
+        }
+        else
+        {
             string[sPos] = token->text[tPos];
         }
     }
     AstNode *node = ast_create_node(AST_STRING);
-    if (!node) {
+    if (!node)
+    {
         token_free(token);
         free(string);
         return NULL;
@@ -38,8 +46,10 @@ AstNode *ast_parse_string(void *tokenizer) {
     return node;
 }
 
-int ast_print_string(AstNode *node, int outFd) {
-    if (!node || node->type != AST_STRING) {
+int ast_print_string(AstNode *node, int outFd)
+{
+    if (!node || node->type != AST_STRING)
+    {
         return 1;
     }
     dprintf(outFd, "%s", node->string.originalToken->text);

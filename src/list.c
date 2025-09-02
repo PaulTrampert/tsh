@@ -2,7 +2,8 @@
 #include "exit_codes.h"
 #include <stdlib.h>
 
-struct _list_node {
+struct _list_node
+{
     void *data;
     struct _list_node *next;
     struct _list_node *prev;
@@ -10,13 +11,15 @@ struct _list_node {
 
 typedef struct _list_node ListNode;
 
-struct _list {
+struct _list
+{
     ListNode *head;
     ListNode *tail;
     size_t size;
 };
 
-struct _listIterator {
+struct _listIterator
+{
     List *list;
     ListNode *current;
 };
@@ -25,7 +28,8 @@ ListNode *list_node_create(void *data);
 void list_insert_before(ListNode *before, ListNode *new_node);
 void list_insert_after(ListNode *after, ListNode *new_node);
 
-void list_insert_before(ListNode *before, ListNode *new_node) {
+void list_insert_before(ListNode *before, ListNode *new_node)
+{
     ListNode *after = before->prev;
     after->next = new_node;
     new_node->prev = after;
@@ -33,13 +37,16 @@ void list_insert_before(ListNode *before, ListNode *new_node) {
     before->prev = new_node;
 }
 
-void list_insert_after(ListNode *after, ListNode *new_node) {
+void list_insert_after(ListNode *after, ListNode *new_node)
+{
     list_insert_before(after->next, new_node);
 }
 
-ListNode *list_node_create(void *data) {
+ListNode *list_node_create(void *data)
+{
     ListNode *node = malloc(sizeof(ListNode));
-    if (!node) exit(EOOM);
+    if (!node)
+        exit(EOOM);
 
     node->data = data;
     node->next = NULL;
@@ -48,18 +55,22 @@ ListNode *list_node_create(void *data) {
     return node;
 }
 
-List *list_create() {
+List *list_create()
+{
     List *list = malloc(sizeof(List));
-    if (!list) exit(EOOM);
+    if (!list)
+        exit(EOOM);
 
     list->size = 0;
     list->head = list_node_create(NULL);
-    if (!list->head) {
+    if (!list->head)
+    {
         free(list);
         exit(EOOM);
     }
     list->tail = list_node_create(NULL);
-    if (!list->tail) {
+    if (!list->tail)
+    {
         free(list->head);
         free(list);
         exit(EOOM);
@@ -71,11 +82,14 @@ List *list_create() {
     return list;
 }
 
-void list_destroy(List *list) {
-    if (!list) return;
+void list_destroy(List *list)
+{
+    if (!list)
+        return;
 
     ListNode *current = list->head;
-    while (current) {
+    while (current)
+    {
         ListNode *next = current->next;
         free(current);
         current = next;
@@ -84,11 +98,14 @@ void list_destroy(List *list) {
     free(list);
 }
 
-int list_append(List *list, void *data) {
-    if (!list) return -1;
+int list_append(List *list, void *data)
+{
+    if (!list)
+        return -1;
 
     ListNode *new_node = list_node_create(data);
-    if (!new_node) return -1;
+    if (!new_node)
+        return -1;
 
     list_insert_before(list->tail, new_node);
     list->size++;
@@ -96,23 +113,29 @@ int list_append(List *list, void *data) {
     return 0;
 }
 
-void *list_get(List *list, size_t index) {
-    if (!list || index >= list->size) return NULL;
+void *list_get(List *list, size_t index)
+{
+    if (!list || index >= list->size)
+        return NULL;
 
     ListNode *current = list->head;
-    for (size_t i = 0; i < index; i++) {
+    for (size_t i = 0; i < index; i++)
+    {
         current = current->next;
     }
 
     return current ? current->data : NULL;
 }
 
-size_t list_size(List *list) {
+size_t list_size(List *list)
+{
     return list ? list->size : 0;
 }
 
-void *list_dequeue(List *list) {
-    if (!list || list->size == 0) return NULL;
+void *list_dequeue(List *list)
+{
+    if (!list || list->size == 0)
+        return NULL;
 
     ListNode *first = list->head->next;
     void *data = first->data;
@@ -124,18 +147,24 @@ void *list_dequeue(List *list) {
     return data;
 }
 
-void *list_head(List *list) {
-    if (!list || list->size == 0) return NULL;
+void *list_head(List *list)
+{
+    if (!list || list->size == 0)
+        return NULL;
 
     return list->head->next->data;
 }
 
-int list_for_each(List *list, int (*callback)(void *data, void *ctx), void *ctx) {
-    if (!list || !callback) return -1;
+int list_for_each(List *list, int (*callback)(void *data, void *ctx), void *ctx)
+{
+    if (!list || !callback)
+        return -1;
 
     ListNode *current = list->head->next;
-    while (current != list->tail) {
-        if (callback(current->data, ctx) != 0) {
+    while (current != list->tail)
+    {
+        if (callback(current->data, ctx) != 0)
+        {
             return -1;
         }
         current = current->next;
@@ -144,11 +173,14 @@ int list_for_each(List *list, int (*callback)(void *data, void *ctx), void *ctx)
     return 0;
 }
 
-ListIterator *list_iterator_create(List *list) {
-    if (!list) return NULL;
+ListIterator *list_iterator_create(List *list)
+{
+    if (!list)
+        return NULL;
 
     ListIterator *iter = malloc(sizeof(ListIterator));
-    if (!iter) exit(EOOM);
+    if (!iter)
+        exit(EOOM);
 
     iter->current = list->head->next;
     iter->list = list;
@@ -156,17 +188,22 @@ ListIterator *list_iterator_create(List *list) {
     return iter;
 }
 
-void list_iterator_destroy(ListIterator *iter) {
+void list_iterator_destroy(ListIterator *iter)
+{
     free(iter);
 }
 
-bool list_iterator_has_next(ListIterator *iter) {
-    if (!iter) return false;
+bool list_iterator_has_next(ListIterator *iter)
+{
+    if (!iter)
+        return false;
     return iter->current != iter->list->tail;
 }
 
-void *list_iterator_next(ListIterator *iter) {
-    if (!iter || !list_iterator_has_next(iter)) return NULL;
+void *list_iterator_next(ListIterator *iter)
+{
+    if (!iter || !list_iterator_has_next(iter))
+        return NULL;
 
     void *data = iter->current->data;
     iter->current = iter->current->next;
