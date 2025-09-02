@@ -28,6 +28,7 @@ AstNode *ast_parse_pipeline(void *tokenizer) {
             token_free(tok);
             return NULL;
         }
+        token_free(tok);
         list_append(pipeline_node->pipeline.commands, next_cmd);
     }
 
