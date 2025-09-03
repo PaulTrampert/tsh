@@ -8,7 +8,8 @@ typedef enum
 {
     AST_PIPELINE,
     AST_COMMAND,
-    AST_STRING
+    AST_STRING,
+    AST_VAR_STRING
 } ASTNodeType;
 
 struct _astNode
@@ -31,7 +32,13 @@ struct _astNode
         {
             char *value;
             Token *originalToken;
+            struct _astNode *varStringNode;
         } string;
+
+        struct
+        {
+            Token *idWord; // Token of type WORD without the leading $
+        } var_string;
     };
 };
 

@@ -106,3 +106,12 @@ Token *tokenizer_next(void *tokenizer)
 
     return (Token *)list_dequeue(tokenList);
 }
+
+void tokenizer_replace(void *tokenizer, Token* token)
+{
+    if (!tokenizer || !token)
+        return;
+
+    List *tokenList = (List *)tokenizer;
+    list_prepend(tokenList, token);
+}

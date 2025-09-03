@@ -10,6 +10,7 @@ typedef struct _listIterator ListIterator;
 List *list_create();
 void list_destroy(List *list);
 int list_append(List *list, void *data);
+int list_prepend(List *list, void *data);
 void *list_get(List *list, size_t index);
 void *list_dequeue(List *list);
 void *list_head(List *list);
