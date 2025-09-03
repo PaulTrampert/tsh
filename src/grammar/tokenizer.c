@@ -46,7 +46,12 @@ void *tokenizer_init(char *inputStr, int inputLen)
             break;
         default:
             type = WORD;
-            scanner_find_next_whitespace(&scanner);
+            char peekChar = scanner_peek(&scanner);
+            while (peekChar != '\0' && !char_is_whitespace(peekChar) && !char_is_operator(peekChar))
+            {
+                scanner_next(&scanner);
+                peekChar = scanner_peek(&scanner);
+            }
             break;
         }
 
