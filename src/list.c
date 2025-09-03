@@ -113,6 +113,14 @@ int list_append(List *list, void *data)
     return 0;
 }
 
+int list_prepend(List* list, void* data)
+{
+    ListNode *newNode = list_node_create(data);
+    list_insert_after(list->head, newNode);
+    list->size++;
+    return 0;
+}
+
 void *list_get(List *list, size_t index)
 {
     if (!list || index >= list->size)

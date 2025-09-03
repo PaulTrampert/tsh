@@ -10,4 +10,6 @@ Token *tokenizer_peek(void *tokenizer);
 
 Token *tokenizer_next(void *tokenizer);
 
+void tokenizer_replace(void *tokenizer, Token *token);
+
 #endif // TOKENIZER_H

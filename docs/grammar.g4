@@ -6,4 +6,6 @@ command:
             string+
         ;
 
-string: UQSTRING | SQSTRING;
+string: var_string | WORD | SQSTRING;
+
+var_string: OUT_AS_VAL WORD;

@@ -9,7 +9,8 @@ enum _tokenType
 
     // Operators
     AMP,
-    PIPE
+    PIPE,
+    OUT_AS_VAL
 };
 
 typedef enum _tokenType TokenType;

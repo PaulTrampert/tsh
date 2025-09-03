@@ -5,6 +5,7 @@
 #include "rules/string.h"
 #include "rules/command.h"
 #include "rules/pipeline.h"
+#include "rules/var_string.h"
 
 void ast_free_list(List *list)
 {
@@ -54,6 +55,10 @@ AstNode *ast_create_node(ASTNodeType type)
     case AST_STRING:
         node->string.originalToken = NULL;
         node->string.value = NULL;
+        node->string.varStringNode = NULL;
+        break;
+    case AST_VAR_STRING:
+        node->var_string.idWord = NULL;
         break;
     default:
         free(node);
@@ -81,6 +86,12 @@ void ast_free_node(AstNode *node)
             free(node->string.value);
         if (node->string.originalToken)
             token_free(node->string.originalToken);
+        if (node->string.varStringNode)
+            ast_free_node(node->string.varStringNode);
+        break;
+    case AST_VAR_STRING:
+        if (node->var_string.idWord)
+            token_free(node->var_string.idWord);
         break;
     default:
         break;
@@ -105,6 +116,8 @@ int ast_print(AstNode *node, int outFd)
     case AST_STRING:
         ast_print_string(node, outFd);
         break;
+    case AST_VAR_STRING:
+        ast_print_var_string(node, outFd);
     default:
         break;
     }
@@ -122,6 +135,8 @@ char *ast_type_name(ASTNodeType type)
         return "COMMAND";
     case AST_STRING:
         return "STRING";
+    case AST_VAR_STRING:
+        return "VAR_STRING";
     default:
         return "UNKNOWN";
     }

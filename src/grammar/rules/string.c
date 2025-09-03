@@ -1,11 +1,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "string.h"
+#include "var_string.h"
 #include "../tokenizer.h"
 #include "../../esc_map.h"
 
 AstNode *ast_parse_string(void *tokenizer)
 {
+    AstNode *varStringNode = ast_parse_var_string(tokenizer);
+    if (varStringNode)
+    {
+        AstNode *node = ast_create_node(AST_STRING);
+        if (!node)
+        {
+            ast_free_node(varStringNode);
+            return NULL;
+        }
+        node->string.varStringNode = varStringNode;
+        return node;
+    }
     Token *token = tokenizer_peek(tokenizer);
     if (!token || (token->type != WORD && token->type != SQSTRING))
     {

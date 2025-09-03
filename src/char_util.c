@@ -27,5 +27,9 @@ bool char_is_digit(char c)
 
 bool char_is_operator(char c)
 {
-    return c == '&' || c == '|' || c == '\'';
+    return c == '&'
+        || c == '|'
+        || c == '\''
+        || c == '$'
+    ;
 }

@@ -47,11 +47,41 @@ int execute_ast(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, Execu
         return execute_command(root, stdin_fd, stdout_fd, stderr_fd, result);
     case AST_PIPELINE:
         return execute_pipeline(root, stdin_fd, stdout_fd, stderr_fd, result);
+    case AST_VAR_STRING:
+        return execute_var_string(root, stdin_fd, stdout_fd, stderr_fd, result);
     default:
         result->status = -1;
         result->error = strdup("Unknown AST node type");
         return result->status;
     }
+}
+
+int execute_var_string(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result)
+{
+    if (!root || root->type != AST_VAR_STRING || !result)
+    {
+        if (result)
+        {
+            result->status = -1;
+            result->error = strdup("Invalid AST node for variable string execution");
+        }
+        return result->status;
+    }
+
+    char *varName = root->var_string.idWord->text;
+    char *varValue = getenv(varName);
+    if (!varValue)
+    {
+        varValue = strdup("");
+    }
+    else
+    {
+        varValue = strdup(varValue);
+    }
+    result->status = 0;
+    result->output = varValue;
+    result->error = NULL;
+    return result->status;
 }
 
 int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
@@ -219,6 +249,18 @@ int execute_string(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, Ex
     if (root && root->type == AST_STRING)
     {
         // Execute the string command
+        if (root->string.varStringNode)
+        {
+            ExecuteResult varResult;
+            varResult.status = 0;
+            varResult.output = NULL;
+            varResult.error = NULL;
+            execute_ast(root->string.varStringNode, stdin_fd, stdout_fd, stderr_fd, &varResult);
+            result->status = varResult.status;
+            result->output = varResult.output;
+            result->error = varResult.error;
+            return result->status;
+        }
         result->status = 0;
         result->output = strdup(root->string.value);
         result->error = NULL;

@@ -37,6 +37,9 @@ void *tokenizer_init(char *inputStr, int inputLen)
         case '|':
             type = PIPE;
             break;
+        case '$':
+            type = OUT_AS_VAL;
+            break;
         case '\'':
             type = SQSTRING;
             if (scanner_find_next(&scanner, '\'') == -1)
@@ -102,4 +105,13 @@ Token *tokenizer_next(void *tokenizer)
     List *tokenList = (List *)tokenizer;
 
     return (Token *)list_dequeue(tokenList);
+}
+
+void tokenizer_replace(void *tokenizer, Token* token)
+{
+    if (!tokenizer || !token)
+        return;
+
+    List *tokenList = (List *)tokenizer;
+    list_prepend(tokenList, token);
 }
