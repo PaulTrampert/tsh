@@ -37,6 +37,9 @@ void *tokenizer_init(char *inputStr, int inputLen)
         case '|':
             type = PIPE;
             break;
+        case '$':
+            type = OUT_AS_VAL;
+            break;
         case '\'':
             type = SQSTRING;
             if (scanner_find_next(&scanner, '\'') == -1)
