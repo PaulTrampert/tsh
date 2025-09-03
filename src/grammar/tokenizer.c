@@ -20,7 +20,7 @@ void *tokenizer_init(char *inputStr, int inputLen)
 
     char currentChar;
     int start = scanner.position;
-    while ((currentChar = scanner_next(&scanner)) != NULL)
+    while ((currentChar = scanner_next(&scanner)) != '\0')
     {
         start = scanner.position - 1;
         if (char_is_whitespace(currentChar))
@@ -45,8 +45,13 @@ void *tokenizer_init(char *inputStr, int inputLen)
             }
             break;
         default:
-            type = UQSTRING;
-            scanner_find_next_whitespace(&scanner);
+            type = WORD;
+            char peekChar = scanner_peek(&scanner);
+            while (peekChar != '\0' && !char_is_whitespace(peekChar) && !char_is_operator(peekChar))
+            {
+                scanner_next(&scanner);
+                peekChar = scanner_peek(&scanner);
+            }
             break;
         }
 

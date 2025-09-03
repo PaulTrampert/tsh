@@ -18,4 +18,7 @@ bool char_is_alpha(char c);
 // Returns true if c is a digit (0-9)
 bool char_is_digit(char c);
 
+// Returns true if c is an operator. Currently, operators are: '&', '|'
+bool char_is_operator(char c);
+
 #endif // CHAR_UTIL_H

@@ -7,7 +7,7 @@
 AstNode *ast_parse_string(void *tokenizer)
 {
     Token *token = tokenizer_peek(tokenizer);
-    if (!token || (token->type != UQSTRING && token->type != SQSTRING))
+    if (!token || (token->type != WORD && token->type != SQSTRING))
     {
         return NULL;
     }

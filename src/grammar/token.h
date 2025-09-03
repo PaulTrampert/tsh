@@ -4,7 +4,7 @@
 enum _tokenType
 {
     // Primitives
-    UQSTRING,
+    WORD,
     SQSTRING,
 
     // Operators
