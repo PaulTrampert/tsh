@@ -45,7 +45,7 @@ void *tokenizer_init(char *inputStr, int inputLen)
             }
             break;
         default:
-            type = UQSTRING;
+            type = WORD;
             scanner_find_next_whitespace(&scanner);
             break;
         }
