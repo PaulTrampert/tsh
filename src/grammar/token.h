@@ -10,6 +10,7 @@ enum _tokenType
     // Operators
     AMP,
     PIPE,
+    ASSIGN,
     OUT_AS_VAL
 };
 

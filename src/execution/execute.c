@@ -7,6 +7,7 @@
 #include "execute_pipeline.h"
 #include "execute_sqstring.h"
 #include "execute_string.h"
+#include "execute_var_assign.h"
 #include "execute_var_string.h"
 #include "execute_word.h"
 
@@ -60,6 +61,8 @@ int execute_ast(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, Execu
         return execute_sqstring(root, stdin_fd, stdout_fd, stderr_fd, result);
     case AST_WORD:
         return execute_word(root, stdin_fd, stdout_fd, stderr_fd, result);
+    case AST_VAR_ASSIGN:
+        return execute_var_assign(root, stdin_fd, stdout_fd, stderr_fd, result);
     default:
         result->status = -1;
         result->error = strdup("Unknown AST node type");

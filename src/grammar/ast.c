@@ -6,6 +6,7 @@
 #include "rules/command.h"
 #include "rules/pipeline.h"
 #include "rules/sqstring.h"
+#include "rules/var_assign.h"
 #include "rules/var_string.h"
 #include "rules/word.h"
 
@@ -47,9 +48,16 @@ AstNode *ast_create_node(ASTNodeType type)
         }
         break;
     case AST_COMMAND:
+        node->command.var_assigns = list_create();
+        if (!node->command.var_assigns)
+        {
+            free(node);
+            return NULL;
+        }
         node->command.strings = list_create();
         if (!node->command.strings)
         {
+            list_destroy(node->command.var_assigns);
             free(node);
             return NULL;
         }
@@ -66,6 +74,11 @@ AstNode *ast_create_node(ASTNodeType type)
     case AST_WORD:
         node->word.wordToken = NULL;
         break;
+    case AST_VAR_ASSIGN:
+        node->var_assign.varWord = NULL;
+        node->var_assign.stringNode = NULL;
+        break;
+
     default:
         free(node);
         return NULL;
@@ -103,6 +116,12 @@ void ast_free_node(AstNode *node)
         if (node->word.wordToken)
             token_free(node->word.wordToken);
         break;
+    case AST_VAR_ASSIGN:
+        if (node->var_assign.varWord)
+            token_free(node->var_assign.varWord);
+        if (node->var_assign.stringNode)
+            ast_free_node(node->var_assign.stringNode);
+        break;
     default:
         break;
     }
@@ -135,6 +154,8 @@ int ast_print(AstNode *node, int outFd)
     case AST_WORD:
         ast_print_word(node, outFd);
         break;
+    case AST_VAR_ASSIGN:
+        ast_print_var_assign(node, outFd);
     default:
         break;
     }

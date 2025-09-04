@@ -11,7 +11,8 @@ typedef enum
     AST_STRING,
     AST_SQSTRING,
     AST_WORD,
-    AST_VAR_STRING
+    AST_VAR_STRING,
+    AST_VAR_ASSIGN
 } ASTNodeType;
 
 struct _astNode
@@ -27,6 +28,7 @@ struct _astNode
 
         struct
         {
+            List *var_assigns; // List of AstNode of type AST_VAR_ASSIGN
             List *strings; // List of AstNode of type AST_STRING
         } command;
 
@@ -49,6 +51,12 @@ struct _astNode
         {
             Token *wordToken; // Token of type WORD
         } word;
+
+        struct
+        {
+            Token *varWord; // Token of type WORD
+            struct _astNode *stringNode; // AstNode of type AST_STRING
+        } var_assign;
     };
 };
 

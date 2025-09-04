@@ -40,6 +40,9 @@ void *tokenizer_init(char *inputStr, int inputLen)
         case '$':
             type = OUT_AS_VAL;
             break;
+        case '=':
+            type = ASSIGN;
+            break;
         case '\'':
             type = SQSTRING;
             if (scanner_find_next(&scanner, '\'') == -1)
