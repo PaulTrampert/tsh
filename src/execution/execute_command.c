@@ -16,6 +16,22 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
     result->status = -1;
     if (root && root->type == AST_COMMAND)
     {
+        ListIterator *varIter = list_iterator_create(root->command.var_assigns);
+        while (list_iterator_has_next(varIter))
+        {
+            AstNode *varAssignNode = list_iterator_next(varIter);
+            ExecuteResult varResult;
+            execute_result_init(&varResult);
+            execute_ast(varAssignNode, stdin_fd, stdout_fd, stderr_fd, &varResult);
+            if (EXECUTE_RESULT_FAILED(varResult.status))
+            {
+                result->status = varResult.status;
+                result->error = varResult.error;
+                list_iterator_destroy(varIter);
+                return result->status;
+            }
+        }
+        list_iterator_destroy(varIter);
         ArrayList *args = array_list_create();
         ListIterator *iter = list_iterator_create(root->command.strings);
         while (list_iterator_has_next(iter))

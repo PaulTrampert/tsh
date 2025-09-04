@@ -18,7 +18,7 @@ AstNode *ast_parse_command(void *tokenizer)
         AstNode *var_assign_node = ast_parse_var_assign(tokenizer);
         if (!var_assign_node)
             break;
-        if (list_append(var_assign_node->command.var_assigns, var_assign_node) != 0)
+        if (list_append(node->command.var_assigns, var_assign_node) != 0)
         {
             ast_free_node(var_assign_node);
             ast_free_node(node);
