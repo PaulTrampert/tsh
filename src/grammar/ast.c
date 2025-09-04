@@ -98,6 +98,7 @@ void ast_free_node(AstNode *node)
         ast_free_list(node->pipeline.commands);
         break;
     case AST_COMMAND:
+        ast_free_list(node->command.var_assigns);
         ast_free_list(node->command.strings);
         break;
     case AST_STRING:

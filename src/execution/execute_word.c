@@ -18,7 +18,7 @@ int execute_word(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, Exec
     }
 
     Token *token = root->word.wordToken;
-    result->output = calloc(token->length, sizeof(char));
+    result->output = calloc(token->length + 1, sizeof(char));
     if (!result->output) exit(EOOM);
 
     int resultPos = 0;

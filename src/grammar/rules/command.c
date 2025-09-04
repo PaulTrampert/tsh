@@ -57,8 +57,23 @@ int ast_print_command(AstNode *node, int outFd)
         return 1;
     }
 
-    ListIterator *it = list_iterator_create(node->command.strings);
+    ListIterator *it = list_iterator_create(node->command.var_assigns);
     bool first = true;
+    while (list_iterator_has_next(it))
+    {
+        if (!first)
+        {
+            dprintf(outFd, " ");
+        }
+        AstNode *varAssignNode = list_iterator_next(it);
+        ast_print(varAssignNode, outFd);
+        first = false;
+    }
+    list_iterator_destroy(it);
+
+    it = list_iterator_create(node->command.strings);
+    first = true;
+
     while (list_iterator_has_next(it))
     {
         if (!first)
