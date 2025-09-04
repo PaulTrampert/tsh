@@ -10,6 +10,7 @@ typedef enum
     AST_COMMAND,
     AST_STRING,
     AST_SQSTRING,
+    AST_WORD,
     AST_VAR_STRING
 } ASTNodeType;
 
@@ -31,8 +32,6 @@ struct _astNode
 
         struct
         {
-            char *value;
-            Token *originalToken;
             struct _astNode *childNode;
         } string;
 
@@ -45,6 +44,11 @@ struct _astNode
         {
             Token *sqStringToken; // Token of type SQSTRING
         } sqstring;
+
+        struct
+        {
+            Token *wordToken; // Token of type WORD
+        } word;
     };
 };
 

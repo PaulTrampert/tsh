@@ -59,6 +59,8 @@ int execute_ast(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, Execu
         return execute_var_string(root, stdin_fd, stdout_fd, stderr_fd, result);
     case AST_SQSTRING:
         return execute_sqstring(root, stdin_fd, stdout_fd, stderr_fd, result);
+    case AST_WORD:
+        return execute_word(root, stdin_fd, stdout_fd, stderr_fd, result);
     default:
         result->status = -1;
         result->error = strdup("Unknown AST node type");
@@ -213,6 +215,39 @@ int execute_sqstring(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, 
     return result->status;
 }
 
+int execute_word(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result)
+{
+    if (!root || root->type != AST_WORD || !result)
+    {
+        if (result)
+        {
+            result->status = -1;
+            result->error = strdup("Invalid AST node for word execution");
+        }
+        return result->status;
+    }
+
+    Token *token = root->sqstring.sqStringToken;
+    result->output = calloc(token->length, sizeof(char));
+    if (!result->output) exit(EOOM);
+
+    int resultPos = 0;
+    for (int i = 0; i < token->length; i++)
+    {
+        if (token->text[i] == '\\')
+        {
+            i++;
+            result->output[resultPos++] = esc_map_escape(token->text[i]);
+        }
+        else
+        {
+            result->output[resultPos++] = token->text[i];
+        }
+    }
+    result->status = 0;
+    return result->status;
+}
+
 int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
 {
     result->status = -1;
@@ -284,22 +319,15 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
 int execute_string(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
 {
     result->status = -1;
-    if (root && root->type == AST_STRING)
+    if (root && root->type == AST_STRING && root->string.childNode)
     {
-        // Execute the string command
-        if (root->string.childNode)
-        {
-            ExecuteResult varResult;
-            execute_result_init(&varResult);
-            execute_ast(root->string.childNode, stdin_fd, stdout_fd, stderr_fd, &varResult);
-            result->status = varResult.status;
-            result->output = varResult.output;
-            result->error = varResult.error;
-            return result->status;
-        }
-        result->status = 0;
-        result->output = strdup(root->string.value);
-        result->error = NULL;
+        ExecuteResult varResult;
+        execute_result_init(&varResult);
+        execute_ast(root->string.childNode, stdin_fd, stdout_fd, stderr_fd, &varResult);
+        result->status = varResult.status;
+        result->output = varResult.output;
+        result->error = varResult.error;
+        return result->status;
     }
     return result->status;
 }

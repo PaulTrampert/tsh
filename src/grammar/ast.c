@@ -7,6 +7,7 @@
 #include "rules/pipeline.h"
 #include "rules/sqstring.h"
 #include "rules/var_string.h"
+#include "rules/word.h"
 
 void ast_free_list(List *list)
 {
@@ -54,8 +55,6 @@ AstNode *ast_create_node(ASTNodeType type)
         }
         break;
     case AST_STRING:
-        node->string.originalToken = NULL;
-        node->string.value = NULL;
         node->string.childNode = NULL;
         break;
     case AST_VAR_STRING:
@@ -63,6 +62,9 @@ AstNode *ast_create_node(ASTNodeType type)
         break;
     case AST_SQSTRING:
         node->sqstring.sqStringToken = NULL;
+        break;
+    case AST_WORD:
+        node->word.wordToken = NULL;
         break;
     default:
         free(node);
@@ -86,10 +88,6 @@ void ast_free_node(AstNode *node)
         ast_free_list(node->command.strings);
         break;
     case AST_STRING:
-        if (node->string.value)
-            free(node->string.value);
-        if (node->string.originalToken)
-            token_free(node->string.originalToken);
         if (node->string.childNode)
             ast_free_node(node->string.childNode);
         break;
@@ -100,6 +98,11 @@ void ast_free_node(AstNode *node)
     case AST_SQSTRING:
         if (node->sqstring.sqStringToken)
             token_free(node->sqstring.sqStringToken);
+        break;
+    case AST_WORD:
+        if (node->word.wordToken)
+            token_free(node->word.wordToken);
+        break;
     default:
         break;
     }
@@ -125,8 +128,13 @@ int ast_print(AstNode *node, int outFd)
         break;
     case AST_VAR_STRING:
         ast_print_var_string(node, outFd);
+        break;
     case AST_SQSTRING:
         ast_print_sqstring(node, outFd);
+        break;
+    case AST_WORD:
+        ast_print_word(node, outFd);
+        break;
     default:
         break;
     }
