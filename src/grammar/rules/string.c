@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "string.h"
+
+#include "sqstring.h"
 #include "var_string.h"
 #include "../tokenizer.h"
 #include "../../esc_map.h"
@@ -8,6 +10,7 @@
 AstNode *ast_parse_string(void *tokenizer)
 {
     AstNode *varStringNode = ast_parse_var_string(tokenizer);
+    if (!varStringNode) varStringNode = ast_parse_sqstring(tokenizer);
     if (varStringNode)
     {
         AstNode *node = ast_create_node(AST_STRING);
@@ -16,7 +19,7 @@ AstNode *ast_parse_string(void *tokenizer)
             ast_free_node(varStringNode);
             return NULL;
         }
-        node->string.varStringNode = varStringNode;
+        node->string.childNode = varStringNode;
         return node;
     }
     Token *token = tokenizer_peek(tokenizer);
@@ -64,6 +67,10 @@ int ast_print_string(AstNode *node, int outFd)
     if (!node || node->type != AST_STRING)
     {
         return 1;
+    }
+    if (node->string.childNode)
+    {
+        return ast_print(node->string.childNode, outFd);
     }
     dprintf(outFd, "%s", node->string.originalToken->text);
     return 0;
