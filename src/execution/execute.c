@@ -25,6 +25,13 @@ ExecuteResult *execute_new_result()
     return result;
 }
 
+void execute_result_init(ExecuteResult* result)
+{
+    result->status = 0;
+    result->output = NULL;
+    result->error = NULL;
+}
+
 void execute_free_result(ExecuteResult *result)
 {
     if (result)
@@ -120,9 +127,7 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
     {
         AstNode *cmdNode = list_iterator_next(cmdIter);
         ExecuteResult cmdResult;
-        cmdResult.status = 0;
-        cmdResult.output = NULL;
-        cmdResult.error = NULL;
+        execute_result_init(&cmdResult);
         int pipeFds[2];
         if (list_iterator_has_next(cmdIter))
         {
@@ -219,9 +224,7 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
         {
             AstNode *argNode = list_iterator_next(iter);
             ExecuteResult argResult;
-            argResult.status = 0;
-            argResult.error = NULL;
-            argResult.output = NULL;
+            execute_result_init(&argResult);
             execute_ast(argNode, stdin_fd, stdout_fd, stderr_fd, &argResult);
             if (EXECUTE_RESULT_FAILED(argResult.status))
             {
@@ -287,9 +290,7 @@ int execute_string(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, Ex
         if (root->string.childNode)
         {
             ExecuteResult varResult;
-            varResult.status = 0;
-            varResult.output = NULL;
-            varResult.error = NULL;
+            execute_result_init(&varResult);
             execute_ast(root->string.childNode, stdin_fd, stdout_fd, stderr_fd, &varResult);
             result->status = varResult.status;
             result->output = varResult.output;
