@@ -63,18 +63,7 @@ List *list_create()
 
     list->size = 0;
     list->head = list_node_create(NULL);
-    if (!list->head)
-    {
-        free(list);
-        exit(EOOM);
-    }
     list->tail = list_node_create(NULL);
-    if (!list->tail)
-    {
-        free(list->head);
-        free(list);
-        exit(EOOM);
-    }
 
     list->head->next = list->tail;
     list->tail->prev = list->head;

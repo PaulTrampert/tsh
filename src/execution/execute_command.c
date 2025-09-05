@@ -55,6 +55,11 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
         }
         list_iterator_destroy(iter);
 
+        if (array_list_size(args) == 0)
+        {
+            return result->status;
+        }
+
         pid_t pid = fork();
 
         if (pid == -1)

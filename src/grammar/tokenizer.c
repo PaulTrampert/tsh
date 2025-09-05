@@ -19,7 +19,7 @@ void *tokenizer_init(char *inputStr, int inputLen)
         return NULL;
 
     char currentChar;
-    int start = scanner.position;
+    size_t start;
     while ((currentChar = scanner_next(&scanner)) != '\0')
     {
         start = scanner.position - 1;
@@ -47,7 +47,7 @@ void *tokenizer_init(char *inputStr, int inputLen)
             type = SQSTRING;
             if (scanner_find_next(&scanner, '\'') == -1)
             {
-                fprintf(stderr, "Unterminated single quote string at position %d\n", start);
+                fprintf(stderr, "Unterminated single quote string at position %ld\n", start);
             }
             break;
         default:

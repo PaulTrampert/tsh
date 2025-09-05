@@ -1,8 +1,6 @@
 #ifndef ARRAY_LIST_H
 #define ARRAY_LIST_H
 
-#include <stddef.h>
-
 typedef struct _arrayList ArrayList;
 
 ArrayList *array_list_create();

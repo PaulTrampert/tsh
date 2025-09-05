@@ -41,7 +41,7 @@ AstNode *ast_parse_command(void *tokenizer)
         }
     }
 
-    if (list_size(node->command.strings) == 0)
+    if (list_size(node->command.var_assigns) == 0 && list_size(node->command.strings) == 0)
     {
         ast_free_node(node);
         return NULL;
