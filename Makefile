@@ -8,7 +8,7 @@ else
 	CFLAGS += -g
 endif
 
-LDFLAGS =
+LDFLAGS = -lreadline
 SRC_DIR = src
 BIN_DIR = bin
 SRC = $(shell find $(SRC_DIR) -name "*.c")

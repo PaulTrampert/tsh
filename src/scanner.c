@@ -7,7 +7,7 @@ char scanner_next(Scanner *scanner)
     {
         return scanner->input[scanner->position++];
     }
-    return EOF;
+    return 0;
 }
 
 char scanner_peek(Scanner *scanner)
@@ -16,7 +16,7 @@ char scanner_peek(Scanner *scanner)
     {
         return scanner->input[scanner->position];
     }
-    return EOF;
+    return 0;
 }
 
 int scanner_match(Scanner *scanner, char expected)
