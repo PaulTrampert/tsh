@@ -8,6 +8,7 @@
 #include "../list.h"
 #include "../array_list.h"
 #include "../exit_codes.h"
+#include "../read_to_end.h"
 
 #define EXECUTE_RESULT_FAILED(status) (status < 0)
 
@@ -39,7 +40,17 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
             AstNode *argNode = list_iterator_next(iter);
             ExecuteResult argResult;
             execute_result_init(&argResult);
-            execute_ast(argNode, stdin_fd, stdout_fd, stderr_fd, &argResult);
+            int argPipe[2];
+            if (pipe(argPipe) == -1)
+            {
+                result->status = -1;
+                result->error = strdup("Failed to create pipe for argument execution");
+                list_iterator_destroy(iter);
+                array_list_destroy(args, &free);
+                return result->status;
+            }
+            execute_ast(argNode, stdin_fd, argPipe[1], stderr_fd, &argResult);
+            close(argPipe[1]);
             if (EXECUTE_RESULT_FAILED(argResult.status))
             {
                 result->status = argResult.status;
@@ -48,10 +59,9 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
                 array_list_destroy(args, &free);
                 return result->status;
             }
-            if (argResult.output)
-            {
-                array_list_append(args, argResult.output);
-            }
+            char *arg = read_to_end(argPipe[0]);
+            close(argPipe[0]);
+            if (arg) array_list_append(args, arg);
         }
         list_iterator_destroy(iter);
 
@@ -69,7 +79,7 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
             array_list_destroy(args, &free);
             return result->status;
         }
-        else if (pid == 0)
+        if (pid == 0)
         {
             if (stdin_fd != STDIN_FILENO)
             {

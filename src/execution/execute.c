@@ -19,7 +19,6 @@ ExecuteResult *execute_new_result()
     if (result)
     {
         result->status = 0;
-        result->output = NULL;
         result->error = NULL;
     }
     return result;
@@ -28,7 +27,6 @@ ExecuteResult *execute_new_result()
 void execute_result_init(ExecuteResult* result)
 {
     result->status = 0;
-    result->output = NULL;
     result->error = NULL;
 }
 
@@ -36,7 +34,6 @@ void execute_free_result(ExecuteResult *result)
 {
     if (result)
     {
-        free(result->output);
         free(result->error);
         free(result);
     }

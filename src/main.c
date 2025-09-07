@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <stddef.h>
 #include <unistd.h>
 #include "grammar/tokenizer.h"
-#include "grammar/token.h"
 #include "grammar/ast.h"
 #include "execution/execute.h"
+#include "readline/readline.h"
+#include "readline/history.h"
 
 int main(int argc, char **argv)
 {
@@ -26,13 +25,8 @@ int main(int argc, char **argv)
     {
         char *input = NULL;
         size_t len = 0;
-        printf("> ");
-        if (getline(&input, &len, stdin) == -1)
-        {
-            perror("getline");
-            free(input);
-            break;
-        }
+        input = readline("> ");
+        len = strlen(input);
 
         if (strncmp(input, "exit", 4) == 0)
         {
@@ -49,6 +43,7 @@ int main(int argc, char **argv)
             free(input);
             continue;
         }
+        add_history(input);
 
         if (echoCommand)
         {
