@@ -3,9 +3,11 @@
 //
 
 #include "execute_var_assign.h"
+#include "../read_to_end.h"
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 int execute_var_assign(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result)
 {
@@ -21,16 +23,28 @@ int execute_var_assign(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd
     char *varName = root->var_assign.varWord->text;
     ExecuteResult valueResult;
     execute_result_init(&valueResult);
-    execute_ast(root->var_assign.stringNode, stdin_fd, stdout_fd, stderr_fd, &valueResult);
+
+    int pipeFds[2];
+    if (pipe(pipeFds) == -1)
+    {
+        result->status = -1;
+        result->error = strdup("Failed to create pipe for variable assignment execution");
+        return result->status;
+    }
+
+    execute_ast(root->var_assign.stringNode, stdin_fd, pipeFds[1], stderr_fd, &valueResult);
+    close(pipeFds[1]);
     if (valueResult.status != 0)
     {
         result->status = valueResult.status;
         result->error = valueResult.error;
-        free(valueResult.output);
         return result->status;
     }
-    setenv(varName, valueResult.output, 1);
-    free(valueResult.output);
+
+    char *valueStr = read_to_end(pipeFds[0]);
+
+    setenv(varName, valueStr, 1);
+    free(valueStr);
     result->status = 0;
     return result->status;
 }

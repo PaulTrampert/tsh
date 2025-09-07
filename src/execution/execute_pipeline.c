@@ -20,7 +20,7 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
             result->status = -1;
             result->error = strdup("Invalid AST node for pipeline execution");
         }
-        return result->status;
+        return -1;
     }
 
     int numCommands = list_size(root->pipeline.commands);
@@ -52,6 +52,7 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
             {
                 result->status = -1;
                 result->error = strdup("Failed to create pipe");
+                free(pids);
                 return result->status;
             }
             cmdOut = pipeFds[1];

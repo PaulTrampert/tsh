@@ -14,12 +14,12 @@ int execute_word(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, Exec
             result->status = -1;
             result->error = strdup("Invalid AST node for word execution");
         }
-        return result->status;
+        return result ? result->status : -1;
     }
 
     Token *token = root->word.wordToken;
-    result->output = calloc(token->length + 1, sizeof(char));
-    if (!result->output) exit(EOOM);
+    char *resultString = calloc(token->length + 1, sizeof(char));
+    if (!resultString) exit(EOOM);
 
     int resultPos = 0;
     for (int i = 0; i < token->length; i++)
@@ -27,14 +27,16 @@ int execute_word(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, Exec
         if (token->text[i] == '\\')
         {
             i++;
-            result->output[resultPos++] = esc_map_escape(token->text[i]);
+            resultString[resultPos++] = esc_map_escape(token->text[i]);
         }
         else
         {
-            result->output[resultPos++] = token->text[i];
+            resultString[resultPos++] = token->text[i];
         }
     }
+    dprintf(stdout_fd, "%s", resultString);
     result->status = 0;
+    free(resultString);
     return result->status;
 }
 

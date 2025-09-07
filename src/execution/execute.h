@@ -6,7 +6,6 @@
 typedef struct _executeResult
 {
     int status;
-    char *output;
     char *error;
 
 } ExecuteResult;

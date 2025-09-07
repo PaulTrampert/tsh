@@ -11,7 +11,6 @@ int execute_string(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, Ex
         execute_result_init(&varResult);
         execute_ast(root->string.childNode, stdin_fd, stdout_fd, stderr_fd, &varResult);
         result->status = varResult.status;
-        result->output = varResult.output;
         result->error = varResult.error;
         return result->status;
     }

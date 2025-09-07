@@ -1,6 +1,9 @@
 #include "execute_var_string.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 int execute_var_string(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result)
 {
@@ -18,14 +21,10 @@ int execute_var_string(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd
     char *varValue = getenv(varName);
     if (!varValue)
     {
-        varValue = strdup("");
+        varValue = "";
     }
-    else
-    {
-        varValue = strdup(varValue);
-    }
+    dprintf(stdout_fd, "%s", varValue);
     result->status = 0;
-    result->output = varValue;
     result->error = NULL;
     return result->status;
 }
