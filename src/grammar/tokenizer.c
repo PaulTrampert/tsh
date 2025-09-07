@@ -7,6 +7,33 @@
 #include "tokenizer.h"
 #include "../char_util.h"
 static Token *read_default_token(Scanner *scanner, char firstChar, List *modeList);
+static Token *read_dquote_token(Scanner *scanner, char firstChar, List *modeList);
+
+static Token *read_dquote_token(Scanner *scanner, char firstChar, List *modeList)
+{
+    size_t start = scanner->position - 1;
+    char currentChar = firstChar;
+
+    TokenType type;
+    switch (currentChar)
+    {
+    case '"':
+        type = DQUOTE;
+        list_dequeue(modeList);
+        break;
+    default:
+        type = WORD;
+        scanner_find_next(scanner, '"');
+        break;
+    }
+
+    Token *token = token_new(type, scanner->input + start, scanner->position - start, start);
+    if (!token)
+    {
+        return NULL;
+    }
+    return token;
+}
 
 static Token *read_default_token(Scanner *scanner, char firstChar, List *modeList)
 {
@@ -32,6 +59,10 @@ static Token *read_default_token(Scanner *scanner, char firstChar, List *modeLis
     case '=':
         type = ASSIGN;
         break;
+    case '"':
+        type = DQUOTE;
+        list_prepend(modeList, &read_dquote_token);
+        break;
     case '\'':
         type = SQSTRING;
         if (scanner_find_next(scanner, '\'') == -1)
@@ -41,12 +72,7 @@ static Token *read_default_token(Scanner *scanner, char firstChar, List *modeLis
         break;
     default:
         type = WORD;
-        char peekChar = scanner_peek(scanner);
-        while (peekChar != '\0' && !char_is_whitespace(peekChar) && !char_is_operator(peekChar))
-        {
-            scanner_next(scanner);
-            peekChar = scanner_peek(scanner);
-        }
+        scanner_scan_word(scanner);
         break;
     }
 

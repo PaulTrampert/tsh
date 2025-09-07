@@ -9,6 +9,7 @@ typedef enum
     AST_COMMAND,
     AST_STRING,
     AST_SQSTRING,
+    AST_DQSTRING,
     AST_WORD,
     AST_VAR_STRING,
     AST_VAR_ASSIGN
@@ -56,6 +57,11 @@ struct _astNode
             Token *varWord; // Token of type WORD
             struct _astNode *stringNode; // AstNode of type AST_STRING
         } var_assign;
+
+        struct
+        {
+            List *children;
+        } dqstring;
     };
 };
 

@@ -7,6 +7,9 @@ enum _tokenType
     WORD,
     SQSTRING,
 
+    // Wrappers
+    DQUOTE,
+
     // Operators
     AMP,
     PIPE,

@@ -12,10 +12,12 @@ typedef struct
     size_t position;
 } Scanner;
 
+bool scanner_has_next(Scanner *scanner);
 char scanner_next(Scanner *scanner);
 char scanner_peek(Scanner *scanner);
 int scanner_match(Scanner *scanner, char expected);
 int scanner_find_next(Scanner *scanner, char target);
 int scanner_find_next_whitespace(Scanner *scanner);
+int scanner_scan_word(Scanner *scanner);
 
 #endif // SCANNER_H
