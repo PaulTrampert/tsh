@@ -2,7 +2,7 @@
 #include <string.h>
 #include "./token.h"
 
-Token *token_new(TokenType type, const char *text, int length, int position)
+Token *token_new(TokenType type, const char *text, size_t length, size_t position)
 {
     Token *token = malloc(sizeof(Token));
     if (!token)
