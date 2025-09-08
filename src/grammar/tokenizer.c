@@ -19,7 +19,7 @@ static Token *read_dquote_token(Scanner *scanner, char firstChar, List *modeList
     {
     case '"':
         type = DQUOTE;
-        list_dequeue(modeList);
+        list_pop_head(modeList);
         break;
     default:
         type = WORD;
@@ -69,6 +69,7 @@ static Token *read_default_token(Scanner *scanner, char firstChar, List *modeLis
         {
             fprintf(stderr, "Unterminated single quote string at position %ld\n", start);
         }
+        scanner_next(scanner);
         break;
     default:
         type = WORD;
@@ -120,7 +121,7 @@ void tokenizer_finalize(void *tokenizer)
 
     while (list_size(tokenList) > 0)
     {
-        Token *token = (Token *)list_dequeue(tokenList);
+        Token *token = (Token *)list_pop_head(tokenList);
         token_free(token);
     }
 
@@ -144,7 +145,7 @@ Token *tokenizer_next(void *tokenizer)
 
     List *tokenList = (List *)tokenizer;
 
-    return (Token *)list_dequeue(tokenList);
+    return (Token *)list_pop_head(tokenList);
 }
 
 void tokenizer_replace(void *tokenizer, Token* token)

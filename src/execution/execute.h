@@ -3,6 +3,8 @@
 
 #include "../grammar/ast.h"
 
+#define EXECUTE_RESULT_FAILED(status) (status < 0)
+
 typedef struct _executeResult
 {
     int status;

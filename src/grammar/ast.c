@@ -18,7 +18,7 @@ void ast_free_list(List *list)
 
     while (list_size(list) > 0)
     {
-        AstNode *node = (AstNode *)list_dequeue(list);
+        AstNode *node = (AstNode *)list_pop_head(list);
         ast_free_node(node);
     }
 
@@ -87,6 +87,7 @@ AstNode *ast_create_node(ASTNodeType type)
             free(node);
             return NULL;
         }
+        break;
     default:
         free(node);
         return NULL;

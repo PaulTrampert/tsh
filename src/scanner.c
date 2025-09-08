@@ -40,7 +40,7 @@ int scanner_find_next(Scanner *scanner, char target)
     {
         if (scanner->input[scanner->position] == target)
         {
-            return scanner->position++;
+            return scanner->position;
         }
         if (scanner->input[scanner->position] == '\\' && scanner->position + 1 < scanner->length)
         {
@@ -74,7 +74,7 @@ int scanner_scan_word(Scanner* scanner)
 {
     do
     {
-        char currentChar = scanner_next(scanner);
+        char currentChar = scanner_peek(scanner);
         if (currentChar == '\\')
         {
             scanner_next(scanner);
@@ -83,6 +83,7 @@ int scanner_scan_word(Scanner* scanner)
         {
             return scanner->position;
         }
+        scanner_next(scanner);
     } while (scanner_has_next(scanner));
     return -1; // Not found
 }

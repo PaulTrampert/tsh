@@ -19,12 +19,31 @@ AstNode* ast_parse_dqstring(void* tokenizer)
     }
     openQuote = tokenizer_next(tokenizer);
     AstNode *node = ast_create_node(AST_DQSTRING);
-    AstNode *child;
-    while (tokenizer_peek(tokenizer)->type != DQUOTE)
+    AstNode *child = NULL;
+    Token *nextToken = tokenizer_peek(tokenizer);
+    while (nextToken && nextToken->type != DQUOTE)
     {
         child = ast_parse_word(tokenizer);
         if (child) list_append(node->dqstring.children, child);
+        nextToken = tokenizer_peek(tokenizer);
     }
+    Token *closeQuote = tokenizer_peek(tokenizer);
+    if (!closeQuote || closeQuote->type != DQUOTE)
+    {
+        fprintf(stderr, "Unterminated double-quoted string starting at position %p\n", &openQuote->position);
+        while (list_size(node->dqstring.children) > 0)
+        {
+            Token *t = list_pop_tail(node->dqstring.children);
+            tokenizer_replace(tokenizer, t);
+        }
+        tokenizer_replace(tokenizer, openQuote);
+        ast_free_node(node);
+        return NULL;
+    }
+    closeQuote = tokenizer_next(tokenizer);
+    token_free(openQuote);
+    token_free(closeQuote);
+    return node;
 }
 
 int ast_print_dqstring(AstNode* node, int outFd)

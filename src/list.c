@@ -129,7 +129,7 @@ size_t list_size(List *list)
     return list ? list->size : 0;
 }
 
-void *list_dequeue(List *list)
+void *list_pop_head(List *list)
 {
     if (!list || list->size == 0)
         return NULL;
@@ -139,6 +139,22 @@ void *list_dequeue(List *list)
     list->head->next = first->next;
     first->next->prev = list->head;
     free(first);
+    list->size--;
+
+    return data;
+}
+
+void* list_pop_tail(List* list)
+{
+    if (!list || list->size == 0)
+        return NULL;
+
+    ListNode* last = list->tail->prev;
+    void* data = last->data;
+    ListNode *newLast = last->prev;
+    newLast->next = list->tail;
+    list->tail->prev = newLast;
+    free(last);
     list->size--;
 
     return data;
