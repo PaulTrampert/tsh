@@ -10,7 +10,7 @@
 #include "../exit_codes.h"
 #include "../read_to_end.h"
 
-#define EXECUTE_RESULT_FAILED(status) (status < 0)
+
 
 int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
 {

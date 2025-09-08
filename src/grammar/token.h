@@ -7,6 +7,9 @@ enum _tokenType
     WORD,
     SQSTRING,
 
+    // Wrappers
+    DQUOTE,
+
     // Operators
     AMP,
     PIPE,
@@ -19,14 +22,14 @@ typedef enum _tokenType TokenType;
 struct _token
 {
     TokenType type;
-    int length;
+    size_t length;
     char *text;
-    int position;
+    size_t position;
 };
 
 typedef struct _token Token;
 
-Token *token_new(TokenType type, const char *text, int length, int position);
+Token *token_new(TokenType type, const char *text, size_t length, size_t position);
 void token_free(Token *token);
 
 #endif // TOKEN_H

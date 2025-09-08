@@ -4,6 +4,7 @@
 #include "ast.h"
 #include "rules/string.h"
 #include "rules/command.h"
+#include "rules/dqstring.h"
 #include "rules/pipeline.h"
 #include "rules/sqstring.h"
 #include "rules/var_assign.h"
@@ -17,7 +18,7 @@ void ast_free_list(List *list)
 
     while (list_size(list) > 0)
     {
-        AstNode *node = (AstNode *)list_dequeue(list);
+        AstNode *node = (AstNode *)list_pop_head(list);
         ast_free_node(node);
     }
 
@@ -79,6 +80,14 @@ AstNode *ast_create_node(ASTNodeType type)
         node->var_assign.stringNode = NULL;
         break;
 
+    case AST_DQSTRING:
+        node->dqstring.children = list_create();
+        if (!node->dqstring.children)
+        {
+            free(node);
+            return NULL;
+        }
+        break;
     default:
         free(node);
         return NULL;
@@ -123,6 +132,9 @@ void ast_free_node(AstNode *node)
         if (node->var_assign.stringNode)
             ast_free_node(node->var_assign.stringNode);
         break;
+    case AST_DQSTRING:
+        ast_free_list(node->dqstring.children);
+        break;
     default:
         break;
     }
@@ -157,6 +169,8 @@ int ast_print(AstNode *node, int outFd)
         break;
     case AST_VAR_ASSIGN:
         ast_print_var_assign(node, outFd);
+    case AST_DQSTRING:
+        ast_print_dqstring(node, outFd);
     default:
         break;
     }

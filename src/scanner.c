@@ -1,6 +1,11 @@
 #include "scanner.h"
 #include "char_util.h"
 
+bool scanner_has_next(Scanner* scanner)
+{
+    return scanner->position < scanner->length;
+}
+
 char scanner_next(Scanner *scanner)
 {
     if (scanner->position < scanner->length)
@@ -35,7 +40,7 @@ int scanner_find_next(Scanner *scanner, char target)
     {
         if (scanner->input[scanner->position] == target)
         {
-            return scanner->position++;
+            return scanner->position;
         }
         if (scanner->input[scanner->position] == '\\' && scanner->position + 1 < scanner->length)
         {
@@ -62,5 +67,23 @@ int scanner_find_next_whitespace(Scanner *scanner)
         }
         scanner->position++;
     }
+    return -1; // Not found
+}
+
+int scanner_scan_word(Scanner* scanner)
+{
+    do
+    {
+        char currentChar = scanner_peek(scanner);
+        if (currentChar == '\\')
+        {
+            scanner_next(scanner);
+        }
+        else if (char_is_whitespace(currentChar) || char_is_operator(currentChar))
+        {
+            return scanner->position;
+        }
+        scanner_next(scanner);
+    } while (scanner_has_next(scanner));
     return -1; // Not found
 }

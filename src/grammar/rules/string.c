@@ -1,5 +1,6 @@
 #include "string.h"
 
+#include "dqstring.h"
 #include "sqstring.h"
 #include "var_string.h"
 #include "word.h"
@@ -7,6 +8,7 @@
 AstNode *ast_parse_string(void *tokenizer)
 {
     AstNode *childNode = ast_parse_var_string(tokenizer);
+    if (!childNode) childNode = ast_parse_dqstring(tokenizer);
     if (!childNode) childNode = ast_parse_sqstring(tokenizer);
     if (!childNode) childNode = ast_parse_word(tokenizer);
     if (childNode)

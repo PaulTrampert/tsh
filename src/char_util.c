@@ -32,5 +32,6 @@ bool char_is_operator(char c)
         || c == '\''
         || c == '$'
         || c == '='
+        || c == '"'
     ;
 }
