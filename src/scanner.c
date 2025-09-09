@@ -36,16 +36,25 @@ int scanner_match(Scanner *scanner, char expected)
 
 int scanner_find_next(Scanner *scanner, char target)
 {
+    return scanner_find_next_in(scanner, (char[]){target, '\0'});
+}
+
+int scanner_find_next_in(Scanner *scanner, const char *target)
+{
+    size_t targetsLen = strlen(target);
     while (scanner->position < scanner->length)
     {
-        if (scanner->input[scanner->position] == target)
+        for (size_t i = 0; i < targetsLen; i++)
         {
-            return scanner->position;
-        }
-        if (scanner->input[scanner->position] == '\\' && scanner->position + 1 < scanner->length)
-        {
-            // Skip escaped character
-            scanner->position++;
+            if (scanner->input[scanner->position] == target[i])
+            {
+                return scanner->position;
+            }
+            if (scanner->input[scanner->position] == '\\' && scanner->position + 1 < scanner->length)
+            {
+                // Skip escaped character
+                scanner->position++;
+            }
         }
         scanner->position++;
     }

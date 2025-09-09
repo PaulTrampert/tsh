@@ -169,8 +169,10 @@ int ast_print(AstNode *node, int outFd)
         break;
     case AST_VAR_ASSIGN:
         ast_print_var_assign(node, outFd);
+        break;
     case AST_DQSTRING:
         ast_print_dqstring(node, outFd);
+        break;
     default:
         break;
     }

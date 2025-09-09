@@ -8,6 +8,29 @@
 #include "../char_util.h"
 static Token *read_default_token(Scanner *scanner, char firstChar, List *modeList);
 static Token *read_dquote_token(Scanner *scanner, char firstChar, List *modeList);
+static Token *read_var_token(Scanner *scanner, char firstChar, List *modeList);
+
+static Token *read_var_token(Scanner *scanner, char firstChar, List *modeList)
+{
+    size_t start = scanner->position - 1;
+    char currentChar = firstChar;
+
+    TokenType type;
+    switch (currentChar)
+    {
+    default:
+        type = WORD;
+        scanner_scan_word(scanner);
+        list_pop_head(modeList);
+        break;
+    }
+    Token *token = token_new(type, scanner->input + start, scanner->position - start, start);
+    if (!token)
+    {
+        return NULL;
+    }
+    return token;
+}
 
 static Token *read_dquote_token(Scanner *scanner, char firstChar, List *modeList)
 {
@@ -21,9 +44,13 @@ static Token *read_dquote_token(Scanner *scanner, char firstChar, List *modeList
         type = DQUOTE;
         list_pop_head(modeList);
         break;
+    case '$':
+        type = OUT_AS_VAL;
+        list_prepend(modeList, &read_var_token);
+        break;
     default:
         type = WORD;
-        scanner_find_next(scanner, '"');
+        scanner_find_next_in(scanner, "\"$");
         break;
     }
 
@@ -55,6 +82,7 @@ static Token *read_default_token(Scanner *scanner, char firstChar, List *modeLis
         break;
     case '$':
         type = OUT_AS_VAL;
+        list_prepend(modeList, &read_var_token);
         break;
     case '=':
         type = ASSIGN;
