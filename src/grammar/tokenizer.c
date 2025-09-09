@@ -44,9 +44,13 @@ static Token *read_dquote_token(Scanner *scanner, char firstChar, List *modeList
         type = DQUOTE;
         list_pop_head(modeList);
         break;
+    case '$':
+        type = OUT_AS_VAL;
+        list_prepend(modeList, &read_var_token);
+        break;
     default:
         type = WORD;
-        scanner_find_next(scanner, '"');
+        scanner_find_next_in(scanner, "\"$");
         break;
     }
 

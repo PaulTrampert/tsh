@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+#include "var_string.h"
 #include "word.h"
 #include "../tokenizer.h"
 #include "../token.h"
@@ -24,6 +25,7 @@ AstNode* ast_parse_dqstring(void* tokenizer)
     while (nextToken && nextToken->type != DQUOTE)
     {
         child = ast_parse_word(tokenizer);
+        if (!child) child = ast_parse_var_string(tokenizer);
         if (child) list_append(node->dqstring.children, child);
         nextToken = tokenizer_peek(tokenizer);
     }
