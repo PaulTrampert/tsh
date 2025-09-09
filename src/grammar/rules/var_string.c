@@ -19,7 +19,7 @@ AstNode* ast_parse_var_string(void* tokenizer)
     Token* idToken = tokenizer_peek(tokenizer);
     if (!idToken || idToken->type != WORD)
     {
-        fprintf(stderr, "Expected variable name after '$' at position %d\n", dollarToken->position);
+        fprintf(stderr, "Expected variable name after '$' at position %ld\n", dollarToken->position);
         tokenizer_replace(tokenizer, dollarToken);
         return NULL;
     }

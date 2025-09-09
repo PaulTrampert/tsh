@@ -30,7 +30,7 @@ AstNode *ast_parse_pipeline(void *tokenizer)
         if (!next_cmd)
         {
             ast_free_node(pipeline_node);
-            fprintf(stderr, "Missing command after '|' at position %d\n", tok->position);
+            fprintf(stderr, "Missing command after '|' at position %ld\n", tok->position);
             token_free(tok);
             return NULL;
         }

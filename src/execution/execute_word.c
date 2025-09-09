@@ -21,8 +21,8 @@ int execute_word(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, Exec
     char *resultString = calloc(token->length + 1, sizeof(char));
     if (!resultString) exit(EOOM);
 
-    int resultPos = 0;
-    for (int i = 0; i < token->length; i++)
+    size_t resultPos = 0;
+    for (size_t i = 0; i < token->length; i++)
     {
         if (token->text[i] == '\\')
         {
