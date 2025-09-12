@@ -100,6 +100,17 @@ void job_tracker_send_signal(int jobId, int signum)
     }
 }
 
+void job_tracker_kill_all()
+{
+    for (int i = 0; i < MAX_JOBS; i++)
+    {
+        if (jobs[i] != NULL)
+        {
+            send_signal(jobs[i], SIGKILL);
+        }
+    }
+}
+
 void job_tracker_handle_sigchld(pid_t pid, int status)
 {
     Job *job = find_job_by_pid(pid);
