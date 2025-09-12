@@ -7,6 +7,7 @@
 #include "execution/execute.h"
 #include "readline/readline.h"
 #include "readline/history.h"
+#include "state/job.h"
 
 int main(int argc, char **argv)
 {
@@ -63,7 +64,6 @@ int main(int argc, char **argv)
             free(result.error);
         }
 
-        ast_free_node(ast);
         tokenizer_finalize(tokenizer);
         free(input);
     }

@@ -8,6 +8,8 @@
 #include "../list.h"
 #include "../array_list.h"
 #include "../exit_codes.h"
+#include "../state/job.h"
+#include "../state/job_tracker.h"
 
 #define EXECUTE_RESULT_FAILED(status) (status < 0)
 
@@ -88,14 +90,12 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
     }
     list_iterator_destroy(cmdIter);
 
-    for (int j = 0; j < i; j++)
+    Job *job = job_new(root, numCommands, pids, root->pipeline.background);
+    job_tracker_add(job);
+    if (!job->background)
     {
-        if (pids[j] != -1)
-        {
-            waitpid(pids[j], &result->status, 0);
-        }
+        job_tracker_set_foreground(job);
     }
-    free(pids);
     return result->status;
 }
 
