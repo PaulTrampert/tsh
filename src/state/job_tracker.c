@@ -4,7 +4,9 @@
 
 #include "job_tracker.h"
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/wait.h>
 
 #include "job.h"
@@ -73,6 +75,17 @@ Job* job_tracker_get_job(int jobid)
     return jobs[jobid];
 }
 
+void job_tracker_signal_foreground(int signum)
+{
+    if (foregroundJob)
+    {
+        for (int i = 0; i < foregroundJob->numPids; i++)
+        {
+            kill(foregroundJob->pids[i], signum);
+        }
+    }
+}
+
 void job_tracker_handle_sigchld(pid_t pid, int status)
 {
     Job *job = find_job_by_pid(pid);
@@ -97,6 +110,12 @@ void job_tracker_handle_sigchld(pid_t pid, int status)
         if (job == foregroundJob)
         {
             foregroundJob = NULL;
+        }
+        if (job->background)
+        {
+            printf("\n");
+            job_print(STDIN_FILENO, job);
+            printf("\n");
         }
         jobs[job->id] = NULL;
         job_free(job);

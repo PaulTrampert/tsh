@@ -12,5 +12,6 @@ void job_tracker_handle_sigchld(pid_t pid, int status);
 int job_tracker_add(Job *job);
 void job_tracker_set_foreground(Job *job);
 Job *job_tracker_get_job(int jobid);
+void job_tracker_signal_foreground(int signum);
 
 #endif //TSH_JOB_TRACKER_H

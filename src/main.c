@@ -8,6 +8,7 @@
 #include "readline/readline.h"
 #include "readline/history.h"
 #include "state/job.h"
+#include "signal_handlers.h"
 
 int main(int argc, char **argv)
 {
@@ -21,7 +22,7 @@ int main(int argc, char **argv)
             echoCommand = true;
         }
     }
-
+    signal_handlers_init();
     while (true)
     {
         char *input = NULL;
@@ -29,6 +30,10 @@ int main(int argc, char **argv)
         input = readline("> ");
         len = strlen(input);
 
+        if (strcmp(input, "") == 0)
+        {
+            continue;
+        }
         if (strncmp(input, "exit", 4) == 0)
         {
             free(input);
