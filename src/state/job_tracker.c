@@ -43,6 +43,14 @@ static int find_slot()
     return -1;
 }
 
+static void send_signal(Job *job, int signum)
+{
+    for (int i = 0; i < job->numPids; i++)
+    {
+        kill(job->pids[i], signum);
+    }
+}
+
 int job_tracker_add(Job *job)
 {
     int jobId = find_slot();
@@ -79,10 +87,16 @@ void job_tracker_signal_foreground(int signum)
 {
     if (foregroundJob)
     {
-        for (int i = 0; i < foregroundJob->numPids; i++)
-        {
-            kill(foregroundJob->pids[i], signum);
-        }
+        send_signal(foregroundJob, signum);
+    }
+}
+
+void job_tracker_send_signal(int jobId, int signum)
+{
+    Job *job = job_tracker_get_job(jobId);
+    if (job)
+    {
+        send_signal(job, signum);
     }
 }
 

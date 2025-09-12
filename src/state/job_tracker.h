@@ -13,5 +13,5 @@ int job_tracker_add(Job *job);
 void job_tracker_set_foreground(Job *job);
 Job *job_tracker_get_job(int jobid);
 void job_tracker_signal_foreground(int signum);
-
+void job_tracker_send_signal(int jobId, int signum);
 #endif //TSH_JOB_TRACKER_H
