@@ -7,7 +7,7 @@
 #include "../esc_map.h"
 #include "../exit_codes.h"
 
-int execute_sqstring(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result)
+int execute_sqstring(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext* result)
 {
     if (!root || root->type != AST_SQSTRING || !result)
     {

@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-int execute_dqstring(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result)
+int execute_dqstring(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext* result)
 {
     if (!root || root->type != AST_DQSTRING || !result)
     {
@@ -21,7 +21,7 @@ int execute_dqstring(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, 
     ListIterator *it = list_iterator_create(root->dqstring.children);
     while (list_iterator_has_next(it))
     {
-        ExecuteResult childResult;
+        ExecuteContext childResult;
         execute_result_init(&childResult);
         AstNode *child = list_iterator_next(it);
         execute_ast(child, stdin_fd, stdout_fd, stderr_fd, &childResult);

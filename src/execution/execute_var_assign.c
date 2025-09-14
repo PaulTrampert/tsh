@@ -9,7 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
-int execute_var_assign(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result)
+int execute_var_assign(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext* result)
 {
     if (!root || root->type != AST_VAR_ASSIGN || !result)
     {
@@ -21,7 +21,7 @@ int execute_var_assign(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd
         return result ? result->status : -1;
     }
     char *varName = root->var_assign.varWord->text;
-    ExecuteResult valueResult;
+    ExecuteContext valueResult;
     execute_result_init(&valueResult);
 
     int pipeFds[2];

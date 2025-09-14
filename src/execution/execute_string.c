@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include "../exit_codes.h"
 
-int execute_string(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
+int execute_string(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext *result)
 {
     result->status = -1;
     if (root && root->type == AST_STRING && root->string.childNode)
     {
-        ExecuteResult varResult;
+        ExecuteContext varResult;
         execute_result_init(&varResult);
         execute_ast(root->string.childNode, stdin_fd, stdout_fd, stderr_fd, &varResult);
         result->status = varResult.status;

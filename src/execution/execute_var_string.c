@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 
-int execute_var_string(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result)
+int execute_var_string(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext* result)
 {
     if (!root || root->type != AST_VAR_STRING || !result)
     {
