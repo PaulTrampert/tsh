@@ -129,11 +129,6 @@ void job_tracker_handle_sigchld(pid_t pid, int status)
         return;
     if (WIFEXITED(status) || WIFSIGNALED(status))
     {
-        if (WIFSIGNALED(status))
-        {
-            int sig = WTERMSIG(status);
-            printf("Job [%d] terminated by signal %d\n", job->id, sig);
-        }
         job->completedPids++;
     }
     if (WIFSTOPPED(status))
@@ -152,11 +147,10 @@ void job_tracker_handle_sigchld(pid_t pid, int status)
         {
             foregroundJob = NULL;
         }
-        if (job->background)
+        else if (job->background)
         {
             printf("\n");
             job_print(STDIN_FILENO, job);
-            printf("\n");
         }
         jobs[job->id] = NULL;
         job_free(job);
