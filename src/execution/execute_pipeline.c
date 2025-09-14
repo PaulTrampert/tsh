@@ -13,7 +13,7 @@
 
 #define EXECUTE_RESULT_FAILED(status) (status < 0)
 
-int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
+int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext *result)
 {
     if (!root || root->type != AST_PIPELINE || !result)
     {
@@ -45,7 +45,7 @@ int execute_pipeline(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, 
     while (list_iterator_has_next(cmdIter))
     {
         AstNode *cmdNode = list_iterator_next(cmdIter);
-        ExecuteResult cmdResult;
+        ExecuteContext cmdResult;
         execute_result_init(&cmdResult);
         int pipeFds[2];
         if (list_iterator_has_next(cmdIter))

@@ -40,6 +40,7 @@ void job_print(int outFd, Job *job)
     {
         dprintf(outFd, "%d ", job->pids[i]);
     }
+    dprintf(outFd, "\n");
 }
 
 void job_incr_completed(Job* job, pid_t pid)

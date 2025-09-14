@@ -57,7 +57,7 @@ int main(int argc, char **argv)
             fprintf(stdout, "\n");
         }
 
-        ExecuteResult result;
+        ExecuteContext result;
         result.status = 0;
         result.error = NULL;
 
