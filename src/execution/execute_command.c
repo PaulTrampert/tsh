@@ -9,27 +9,27 @@
 #include "../array_list.h"
 #include "../exit_codes.h"
 #include "../read_to_end.h"
+#include "../builtins/builtins.h"
 
 
-
-int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
+int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext *context)
 {
-    result->status = -1;
+    context->status = -1;
     if (root && root->type == AST_COMMAND)
     {
         ListIterator *varIter = list_iterator_create(root->command.var_assigns);
         while (list_iterator_has_next(varIter))
         {
             AstNode *varAssignNode = list_iterator_next(varIter);
-            ExecuteResult varResult;
+            ExecuteContext varResult;
             execute_result_init(&varResult);
             execute_ast(varAssignNode, stdin_fd, stdout_fd, stderr_fd, &varResult);
             if (EXECUTE_RESULT_FAILED(varResult.status))
             {
-                result->status = varResult.status;
-                result->error = varResult.error;
+                context->status = varResult.status;
+                context->error = varResult.error;
                 list_iterator_destroy(varIter);
-                return result->status;
+                return context->status;
             }
         }
         list_iterator_destroy(varIter);
@@ -38,26 +38,26 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
         while (list_iterator_has_next(iter))
         {
             AstNode *argNode = list_iterator_next(iter);
-            ExecuteResult argResult;
+            ExecuteContext argResult;
             execute_result_init(&argResult);
             int argPipe[2];
             if (pipe(argPipe) == -1)
             {
-                result->status = -1;
-                result->error = strdup("Failed to create pipe for argument execution");
+                context->status = -1;
+                context->error = strdup("Failed to create pipe for argument execution");
                 list_iterator_destroy(iter);
                 array_list_destroy(args, &free);
-                return result->status;
+                return context->status;
             }
             execute_ast(argNode, stdin_fd, argPipe[1], stderr_fd, &argResult);
             close(argPipe[1]);
             if (EXECUTE_RESULT_FAILED(argResult.status))
             {
-                result->status = argResult.status;
-                result->error = argResult.error;
+                context->status = argResult.status;
+                context->error = argResult.error;
                 list_iterator_destroy(iter);
                 array_list_destroy(args, &free);
-                return result->status;
+                return context->status;
             }
             char *arg = read_to_end(argPipe[0]);
             close(argPipe[0]);
@@ -67,20 +67,21 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
 
         if (array_list_size(args) == 0)
         {
-            return result->status;
+            return context->status;
         }
 
         pid_t pid = fork();
 
         if (pid == -1)
         {
-            result->status = -1;
-            result->error = strdup("Failed to fork");
+            context->status = -1;
+            context->error = strdup("Failed to fork");
             array_list_destroy(args, &free);
-            return result->status;
+            return context->status;
         }
         if (pid == 0)
         {
+            setpgid(0, context->groupId);
             if (stdin_fd != STDIN_FILENO)
             {
                 dup2(stdin_fd, STDIN_FILENO);
@@ -96,14 +97,27 @@ int execute_command(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, E
                 dup2(stderr_fd, STDERR_FILENO);
                 close(stderr_fd);
             }
-            int execResult = execvp((char *)array_list_get(args, 0), (char **)array_list_get_data(args));
-            dprintf(stderr_fd, "Error executing command: %s\n", strerror(errno));
+            builtin_cmd_t builtin = get_builtin((char *)array_list_get(args, 0));
+            int execResult = 0;
+            if (builtin)
+            {
+                execResult = builtin(array_list_size(args), (char **)array_list_get_data(args));
+            }
+            else
+            {
+                execResult = execvp((char *)array_list_get(args, 0), (char **)array_list_get_data(args));
+                dprintf(stderr_fd, "Error executing command: %s\n", strerror(errno));
+            }
             exit(execResult);
+        }
+        if (context->groupId == 0 && pid > 0)
+        {
+            context->groupId = pid;
         }
 
         array_list_destroy(args, &free);
-        result->status = pid;
+        context->status = pid;
     }
-    return result->status;
+    return context->status;
 }
 

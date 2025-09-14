@@ -14,9 +14,9 @@
 
 #define EXECUTE_RESULT_FAILED(status) (status < 0)
 
-ExecuteResult *execute_new_result()
+ExecuteContext *execute_new_result()
 {
-    ExecuteResult *result = (ExecuteResult *)malloc(sizeof(ExecuteResult));
+    ExecuteContext *result = (ExecuteContext *)malloc(sizeof(ExecuteContext));
     if (result)
     {
         result->status = 0;
@@ -25,13 +25,14 @@ ExecuteResult *execute_new_result()
     return result;
 }
 
-void execute_result_init(ExecuteResult* result)
+void execute_result_init(ExecuteContext* result)
 {
     result->status = 0;
+    result->groupId = 0;
     result->error = NULL;
 }
 
-void execute_free_result(ExecuteResult *result)
+void execute_free_result(ExecuteContext *result)
 {
     if (result)
     {
@@ -40,7 +41,7 @@ void execute_free_result(ExecuteResult *result)
     }
 }
 
-int execute_ast(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult *result)
+int execute_ast(AstNode *root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext *result)
 {
     if (!root || !result)
         return -1;

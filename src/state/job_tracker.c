@@ -13,9 +13,9 @@
 
 #define MAX_JOBS 1024
 
-Job *jobs[MAX_JOBS];
+static Job *jobs[MAX_JOBS];
 
-Job *foregroundJob = NULL;
+static Job *foregroundJob = NULL;
 
 static Job *find_job_by_pid(pid_t pid)
 {
@@ -111,6 +111,17 @@ void job_tracker_kill_all()
     }
 }
 
+void job_tracker_print_jobs(int outFd)
+{
+    for (int i = 0; i < MAX_JOBS; i++)
+    {
+        if (jobs[i] != NULL)
+        {
+            job_print(outFd, jobs[i]);
+        }
+    }
+}
+
 void job_tracker_handle_sigchld(pid_t pid, int status)
 {
     Job *job = find_job_by_pid(pid);
@@ -118,6 +129,11 @@ void job_tracker_handle_sigchld(pid_t pid, int status)
         return;
     if (WIFEXITED(status) || WIFSIGNALED(status))
     {
+        if (WIFSIGNALED(status))
+        {
+            int sig = WTERMSIG(status);
+            printf("Job [%d] terminated by signal %d\n", job->id, sig);
+        }
         job->completedPids++;
     }
     if (WIFSTOPPED(status))

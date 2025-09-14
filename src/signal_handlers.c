@@ -33,6 +33,4 @@ void signal_handlers_init()
     signal(SIGCHLD, handle_sigchld);
     signal(SIGINT, handle_signal_forward);
     signal(SIGTSTP, handle_signal_forward);
-
-    atexit(&handle_exit);
 }

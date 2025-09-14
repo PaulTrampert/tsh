@@ -6,6 +6,6 @@
 #define EXECUTION_EXECUTE_DQSTRING_H
 #include "execute.h"
 
-int execute_dqstring(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteResult* result);
+int execute_dqstring(AstNode* root, int stdin_fd, int stdout_fd, int stderr_fd, ExecuteContext* result);
 
 #endif //EXECUTION_EXECUTE_DQSTRING_H
