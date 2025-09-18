@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="build" type="CLionNativeAppRunConfigurationType" nameIsGenerated="true" PROGRAM_PARAMS="--echoCommands" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tsh" TARGET_NAME="build" CONFIG_NAME="build" version="1" RUN_PATH="./bin/tsh">
+  <configuration default="false" name="build" type="CLionNativeAppRunConfigurationType" nameIsGenerated="true" PROGRAM_PARAMS="--echoCommands" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tsh" TARGET_NAME="build" CONFIG_NAME="build" version="1" RUN_PATH="./bin/tsh">
     <method v="2">
       <option name="CLION.COMPOUND.BUILD" enabled="true" />
     </method>

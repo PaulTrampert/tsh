@@ -5,7 +5,9 @@
 #include <wait.h>
 #include "signal_handlers.h"
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "state/job_tracker.h"
 
@@ -13,8 +15,13 @@ static void handle_sigchld(int signum)
 {
     if (signum != SIGCHLD)
         return;
+
     int status;
-    pid_t pid = waitpid(-1, &status, WNOHANG);
+    pid_t pid = waitpid(-1, &status, WNOHANG | WUNTRACED | WCONTINUED);
+    if (pid == 0)
+    {
+        return;
+    }
     job_tracker_handle_sigchld(pid, status);
 }
 

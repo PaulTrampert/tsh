@@ -45,10 +45,7 @@ static int find_slot()
 
 static void send_signal(Job *job, int signum)
 {
-    for (int i = 0; i < job->numPids; i++)
-    {
-        kill(job->pids[i], signum);
-    }
+    kill(-job->pids[0], signum);
 }
 
 int job_tracker_add(Job *job)
@@ -126,7 +123,9 @@ void job_tracker_handle_sigchld(pid_t pid, int status)
 {
     Job *job = find_job_by_pid(pid);
     if (!job)
+    {
         return;
+    }
     if (WIFEXITED(status) || WIFSIGNALED(status))
     {
         job->completedPids++;
@@ -139,6 +138,10 @@ void job_tracker_handle_sigchld(pid_t pid, int status)
         {
             foregroundJob = NULL;
         }
+    }
+    if (WIFCONTINUED(status))
+    {
+        job->status = RUNNING;
     }
     if (job->completedPids == job->numPids)
     {
