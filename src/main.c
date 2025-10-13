@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,8 +28,15 @@ int main(int argc, char **argv)
     {
         char *input = NULL;
         size_t len = 0;
-        input = readline("> ");
+        char *cwd = getcwd(NULL, 0);
+        if (cwd == NULL)
+        {
+            exit(errno);
+        }
+        printf("%s> ", cwd);
+        input = readline("");
         len = strlen(input);
+        free(cwd);
 
         if (strcmp(input, "") == 0)
         {
