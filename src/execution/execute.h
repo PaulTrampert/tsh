@@ -8,6 +8,7 @@
 
 typedef struct
 {
+    int numCmdInPipe;
     int status;
     pid_t groupId;
     char *error;

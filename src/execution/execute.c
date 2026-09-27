@@ -19,14 +19,14 @@ ExecuteContext *execute_new_result()
     ExecuteContext *result = (ExecuteContext *)malloc(sizeof(ExecuteContext));
     if (result)
     {
-        result->status = 0;
-        result->error = NULL;
+        execute_result_init(result);
     }
     return result;
 }
 
 void execute_result_init(ExecuteContext* result)
 {
+    result->numCmdInPipe = 0;
     result->status = 0;
     result->groupId = 0;
     result->error = NULL;

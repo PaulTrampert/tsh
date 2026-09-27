@@ -66,8 +66,7 @@ int main(int argc, char **argv)
         }
 
         ExecuteContext result;
-        result.status = 0;
-        result.error = NULL;
+        execute_result_init(&result);
 
         execute_ast(ast, STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO, &result);
 
